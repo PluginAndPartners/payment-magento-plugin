@@ -1198,3 +1198,7 @@ Pix,Pix
 "Enable Google pixel","Ativar pixel do Google"
 "Please check store id %1 credentials, they are invalid so they were deleted.","Por favor, verifique as credenciais da loja ID %1, elas são inválidas portanto vão ser apagadas."
 Expiration,Expiração
+"Offline Payments Methods","Métodos de Pagamento Offline"
+"Exclude Payment Methods","Excluir métodos de pagamento"
+"Select the payment methods you do NOT want to accept.","Selecione os métodos de pagamento que você NÃO deseja aceitar."
+"Payment Title","Título do Método de Pagamento"
