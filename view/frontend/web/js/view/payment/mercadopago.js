@@ -19,22 +19,33 @@ define(
         var config = window.checkoutConfig.payment,
             methodCheckoutPro = 'mercadopago_paymentmagento_checkout_pro',
             methodCc = 'mercadopago_paymentmagento_cc',
-            methodBoleto = 'mercadopago_paymentmagento_boleto',
+            //methodBoleto = 'mercadopago_paymentmagento_boleto',
             methodPec = 'mercadopago_paymentmagento_pec',
             methodPix = 'mercadopago_paymentmagento_pix',
-            methodPagoFacil = 'mercadopago_paymentmagento_pagofacil',
-            methodRapiPago = 'mercadopago_paymentmagento_rapipago',
-            methodPayCash = 'mercadopago_paymentmagento_paycash',
-            methodOxxo = 'mercadopago_paymentmagento_oxxo',
-            methodEfecty = 'mercadopago_paymentmagento_efecty',
-            methodAbitab = 'mercadopago_paymentmagento_abitab',
-            methodRedpagos = 'mercadopago_paymentmagento_redpagos',
+            // methodPagoFacil = 'mercadopago_paymentmagento_pagofacil',
+            // methodRapiPago = 'mercadopago_paymentmagento_rapipago',
+            // methodPayCash = 'mercadopago_paymentmagento_paycash',
+            // methodOxxo = 'mercadopago_paymentmagento_oxxo',
+            // methodEfecty = 'mercadopago_paymentmagento_efecty',
+            // methodAbitab = 'mercadopago_paymentmagento_abitab',
+            // methodRedpagos = 'mercadopago_paymentmagento_redpagos',
             methodPse = 'mercadopago_paymentmagento_pse',
-            methodBanamex = 'mercadopago_paymentmagento_banamex',
-            methodBancomer = 'mercadopago_paymentmagento_bancomer',
-            methodSerfin = 'mercadopago_paymentmagento_serfin',
-            methodPagoEfectivo = 'mercadopago_paymentmagento_pagoefectivo',
-            methodWebpay = 'mercadopago_paymentmagento_webpay';
+            // methodBanamex = 'mercadopago_paymentmagento_banamex',
+            // methodBancomer = 'mercadopago_paymentmagento_bancomer',
+            // methodSerfin = 'mercadopago_paymentmagento_serfin',
+            // methodPagoEfectivo = 'mercadopago_paymentmagento_pagoefectivo',
+            // methodWebpay = 'mercadopago_paymentmagento_webpay',
+            methodsOff = 'mercadopago_paymentmagento_payment_methods_off';
+
+        
+        if (methodsOff in config) {
+            rendererList.push(
+                {
+                    type: methodsOff,
+                    component: 'MercadoPago_PaymentMagento/js/view/payment/method-renderer/payment_methods_off'
+                }
+            );
+        }
 
         if (methodCheckoutPro in config) {
             rendererList.push(
@@ -54,7 +65,7 @@ define(
             );
         }
 
-        if (methodBoleto in config) {
+        /*if (methodBoleto in config) {
             rendererList.push(
                 {
                     type: methodBoleto,
@@ -62,7 +73,7 @@ define(
                 }
             );
         }
-
+*/
         if (methodPec in config) {
             rendererList.push(
                 {
@@ -81,7 +92,7 @@ define(
             );
         }
 
-        if (methodPagoFacil in config) {
+        /*if (methodPagoFacil in config) {
             rendererList.push(
                 {
                     type: methodPagoFacil,
@@ -143,7 +154,7 @@ define(
                 }
             );
         }
-
+*/
         if (methodPse in config) {
             rendererList.push(
                 {
@@ -153,7 +164,7 @@ define(
             );
         }
 
-        if (methodBanamex in config) {
+        /*if (methodBanamex in config) {
             rendererList.push(
                 {
                     type: methodBanamex,
@@ -197,7 +208,7 @@ define(
                 }
             );
         }
-
+        */
         return Component.extend({});
     }
 );
