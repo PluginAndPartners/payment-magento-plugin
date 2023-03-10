@@ -1178,3 +1178,4 @@ site_disabled.,site_disabled.
 "Select the payment methods you do NOT want to accept.","Seleccione los métodos de pago que NO desea aceptar."
 "Payment Title","Título del metodo de pago"
 "Accept all payment methods","Aceptar todos los medios de pago"
+"There are no payment methods available, please contact the seller.", "No hay métodos de pago disponibles, póngase en contacto con el vendedor."
