@@ -11,7 +11,6 @@ use Magento\Quote\Api\Data\CartInterface;
 use MercadoPago\PaymentMagento\Gateway\Config\ConfigPaymentMethodsOff;
 use MercadoPago\PaymentMagento\Gateway\Config\Config as MercadoPagoConfig;
 
-
 /**
  * User interface model for settings Payment Methods Off.
  */
@@ -99,7 +98,6 @@ class ConfigProviderPaymentMethodsOff implements ConfigProviderInterface
                     'name_capture'                    => $this->config->hasUseNameCapture($storeId),
                     'document_identification_capture' => $this->config->hasUseDocumentIdentificationCapture($storeId),
                     'expiration'                      => $this->config->getExpirationFormat($storeId),
-                    'instruction_checkout'            => nl2br($this->getDescriptions($storeId)),
                     'logo'                            => $this->getLogo(),
                     'payment_methods_off_active'      => $this->getPaymentMethodsOffActive($storeId),
                 ],
@@ -128,20 +126,6 @@ class ConfigProviderPaymentMethodsOff implements ConfigProviderInterface
         }
 
         return $logo;
-    }
-
-    /**
-     * Get Descriptions.
-     *
-     * @param int|null $storeId
-     *
-     * @return Phrase
-     */
-    public function getDescriptions($storeId)
-    {
-        $text = $this->config->getInstructionCheckoutPaymentMethodsOff($storeId);
-
-        return __($text);
     }
     
     public function getPaymentMethodsOffActive($storeId) {

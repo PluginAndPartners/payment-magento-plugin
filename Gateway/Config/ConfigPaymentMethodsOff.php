@@ -33,11 +33,6 @@ class ConfigPaymentMethodsOff extends PaymentConfig
     public const TITLE = 'title';
 
     /**
-     * Instruction Checkout Payment Method Off.
-     */
-    public const INSTRUCTION_CHECKOUT_PAYMENT_METHODS_OFF = 'instruction_checkout';
-
-    /**
      * Expiration.
      */
     public const EXPIRATION = 'expiration';
@@ -52,6 +47,9 @@ class ConfigPaymentMethodsOff extends PaymentConfig
      */
     public const USE_GET_NAME = 'get_name';
 
+     /**
+     * Payment Methods Off.
+     */
     public const PAYMENT_METHODS = 'payment_methods';
 
     /**
@@ -140,24 +138,6 @@ class ConfigPaymentMethodsOff extends PaymentConfig
         );
 
         return $this->date->gmtDate('Y-m-d\T23:59:59.000O', strtotime("+{$due} days"));
-    }
-
-    /**
-     * Get Instruction Checkoout for Ticket.
-     *
-     * @param int|null $storeId
-     *
-     * @return string
-     */
-    public function getInstructionCheckoutPaymentMethodsOff($storeId = null): string
-    {
-        $pathPattern = 'payment/%s/%s';
-
-        return $this->scopeConfig->getValue(
-            sprintf($pathPattern, self::METHOD, self::INSTRUCTION_CHECKOUT_PAYMENT_METHODS_OFF),
-            ScopeInterface::SCOPE_STORE,
-            $storeId
-        );
     }
 
     /**
