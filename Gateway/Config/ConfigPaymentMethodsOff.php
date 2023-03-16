@@ -33,11 +33,6 @@ class ConfigPaymentMethodsOff extends PaymentConfig
     public const TITLE = 'title';
 
     /**
-     * Instruction Checkout Payment Method Off.
-     */
-    public const INSTRUCTION_CHECKOUT_PAYMENT_METHODS_OFF = 'instruction_checkout';
-
-    /**
      * Expiration.
      */
     public const EXPIRATION = 'expiration';
@@ -51,6 +46,11 @@ class ConfigPaymentMethodsOff extends PaymentConfig
      * Get Name.
      */
     public const USE_GET_NAME = 'get_name';
+
+     /**
+     * Payment Methods Off.
+     */
+    public const PAYMENT_METHODS = 'payment_methods';
 
     /**
      * @var ScopeConfigInterface
@@ -141,24 +141,6 @@ class ConfigPaymentMethodsOff extends PaymentConfig
     }
 
     /**
-     * Get Instruction Checkoout for Ticket.
-     *
-     * @param int|null $storeId
-     *
-     * @return string
-     */
-    public function getInstructionCheckoutPaymentMethodsOff($storeId = null): string
-    {
-        $pathPattern = 'payment/%s/%s';
-
-        return $this->scopeConfig->getValue(
-            sprintf($pathPattern, self::METHOD, self::INSTRUCTION_CHECKOUT_PAYMENT_METHODS_OFF),
-            ScopeInterface::SCOPE_STORE,
-            $storeId
-        );
-    }
-
-    /**
      * Get Expiration.
      *
      * @param int|null $storeId
@@ -227,6 +209,17 @@ class ConfigPaymentMethodsOff extends PaymentConfig
 
         return (bool) $this->scopeConfig->getValue(
             sprintf($pathPattern, self::METHOD, self::USE_GET_NAME),
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    public function getPaymentMethodsOffActive($storeId = null): ?string
+    {
+        $pathPattern = 'payment/%s/%s';
+
+        return $this->scopeConfig->getValue(
+            sprintf($pathPattern, self::METHOD, self::PAYMENT_METHODS),
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
