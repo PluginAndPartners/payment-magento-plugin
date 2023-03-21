@@ -111,12 +111,20 @@
                                                                 <item name="title" xsi:type="string" translate="true">Finance Cost</item>
                                                             </item>
                                                         </item>
+                                                        <item name="twocc_data" xsi:type="array">
+                                                            <item name="component"  xsi:type="string">MercadoPago_PaymentMagento/js/view/checkout/cart/totals/twocc_data</item>
+                                                            <item name="sortOrder" xsi:type="string">50</item>
+                                                            <item name="config" xsi:type="array">
+                                                                <item name="template" xsi:type="string">MercadoPago_PaymentMagento/checkout/cart/twocc/twocc_data</item>
+                                                                <item name="title" xsi:type="string" translate="true">TwoCc</item>
+                                                            </item>
+                                                        </item>
                                                     </item>
                                                 </item>
                                             </item>
                                         </item>
                                     </item>
-                                </item>
+                                </item>                               
                             </item>
                         </item>
                     </item>
