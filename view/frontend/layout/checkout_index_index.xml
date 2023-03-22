@@ -112,6 +112,7 @@
                                                             </item>
                                                         </item>
                                                         <item name="twocc_data" xsi:type="array">
+                                                            <css src="MercadoPago_PaymentMagento::css/twocc.less" />
                                                             <item name="component"  xsi:type="string">MercadoPago_PaymentMagento/js/view/checkout/cart/totals/twocc_data</item>
                                                             <item name="sortOrder" xsi:type="string">50</item>
                                                             <item name="config" xsi:type="array">

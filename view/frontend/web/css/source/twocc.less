@@ -145,14 +145,14 @@
             align-items: center;
             justify-content: flex-start;
         }
-      
-            .mp-twocc-edit-img {
-                background: url('../images/twocc/edit.svg') no-repeat center center; 
-                width: 11px; 
-                height: 11px;
-                margin: 4px;      
-            }
-        
+
+        .mp-twocc-edit-img {
+            background: url('../images/twocc/edit.svg') no-repeat center center;
+            width: 11px;
+            height: 11px;
+            margin: 4px;
+        }
+
     }
 }
 
@@ -171,6 +171,93 @@
             background-color: #fff;
             border-radius: 3px;
             padding-bottom: 10px;
+        }
+    }
+}
+
+//css for info in summary
+
+.opc-block-summary {
+    .table-totals {
+        tbody {
+            tr.twocc-header-info {
+                th {
+                    padding: 12px 0 0;
+                    font-weight: 400;
+                }
+            }
+
+            tr.twocc-payment {
+                height: 0px;
+
+                .twocc-payment-info {
+                    font-weight: 400;
+                    padding: 12.5px 0 0;
+                    border-top: 0;
+
+                    .twocc-cards {
+                        display: flex;
+                        flex-direction: column;
+                        padding-bottom: 6px;
+
+                        .twocc-card-info {
+                            display: inline-flex;
+                            align-items: center;
+                            padding: 6px 0;
+
+                            .twocc-card-image {
+                                width: 40px;
+                                height: 40px;
+                                background: #FFFFFF;
+                                border: 1px solid rgba(0, 0, 0, 0.07);
+                                border-radius: 100px;
+                            }
+
+                            .twocc-card-image+div {
+                                padding-left: 6px
+                            }
+                        }
+                    }
+                }
+
+                td {
+                    height: inherit;
+                    border-top: 0px;
+
+                    .twocc-amount-info {
+                        font-weight: 400;
+                        padding: 12.5px 0 0;
+                        border-top: 0;
+
+
+                        .twocc-amount {
+
+                            display: flex;
+                            flex-direction: column;
+                            padding-bottom: 6px;
+
+
+                            height: 100%;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: flex-end;
+                            justify-content: center;
+
+                        }
+
+                        .twocc-amount {
+                            div {
+                                display: flex;
+                                flex-direction: column;
+                                padding-bottom: 6px;
+                                align-items: center;
+                                height: 40px;
+                                padding: 6px 0;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
