@@ -46,31 +46,82 @@ class FetchStatus extends AbstractModel
      * Command Fetch.
      *
      * @param int $orderId
+     * @param string $caller
      *
-     * @return void
+     * @return Order $order
      */
-    public function fetch($orderId)
+    public function fetch($orderId, $caller)
     {
         $this->writeln('Init Fetch Status');
-
         /** @var Order $order */
         $order = $this->order->load($orderId);
 
+        $this->logger->debug([
+            'Caller class' => $caller,
+            'Action'    => 'Fetching',
+            'Order state' => $order->getState(),
+            'Order status' => $order->getStatus(),
+        ]);
+        
         $payment = $order->getPayment();
 
         try {
+            $this->logger->debug([
+                'Caller class' => $caller,
+                'Action'    => 'Before update',
+            ]);
             $payment->update(true);
+            $this->logger->debug([
+                'Caller class' => $caller,
+                'Action'    => 'After update',
+            ]);
         } catch (Exception $exc) {
             $this->writeln('<error>'.$exc->getMessage().'</error>');
+            $this->logger->debug([
+                'Action'    => 'Fetching error',
+                'msg' => $exc->getMessage(),
+            ]);
         }
 
+        $this->logger->debug([
+            'Caller class' => $caller,
+            'Action'    => 'After fetching',
+            'Order state' => $order->getState(),
+            'Order status' => $order->getStatus(),
+        ]);
+
         if ($order->getState() === Order::STATE_PAYMENT_REVIEW) {
-            $order = $payment->getOrder();
-            $order->setState(Order::STATE_NEW);
-            $order->setStatus('pending');
+            if ($order->getStatus() === Order::STATE_CLOSED) {
+                $this->logger->debug([
+                    'Action'    => 'Blocked updating closed order status',
+                ]);
+            } else if ($order->getStatus() === Order::STATE_COMPLETE) {
+                $this->logger->debug([
+                    'Action'    => 'Blocked updating complete order status',
+                ]);
+                // $order = $payment->getOrder();
+                // $order->setState(Order::STATE_CLOSED);
+                // $order->setStatus('closed');
+                
+            } else {
+                $order = $payment->getOrder();
+                $order->setState(Order::STATE_NEW);
+                $order->setStatus('pending');
+                
+                $this->logger->debug([
+                    'Action'    => 'Updated order with payment review to pending',
+                ]);
+            }
         }
 
         $order->save();
+
+        $this->logger->debug([
+            'Caller class' => $caller,
+            'Action'    => 'First save',
+            'Order state' => $order->getState(),
+            'Order status' => $order->getStatus(),
+        ]);
 
         $this->writeln(
             '<info>'.
@@ -85,6 +136,15 @@ class FetchStatus extends AbstractModel
 
         $order->save();
 
+        $this->logger->debug([
+            'Caller class' => $caller,
+            'Action'    => 'Second save',
+            'Order state' => $order->getState(),
+            'Order status' => $order->getStatus(),
+        ]);
+
         $this->writeln(__('Finished'));
+
+        return $order;
     }
 }
