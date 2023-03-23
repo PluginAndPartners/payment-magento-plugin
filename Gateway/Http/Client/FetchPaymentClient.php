@@ -39,6 +39,11 @@ class FetchPaymentClient implements ClientInterface
     public const MP_PAYMENT_ID = 'mp_payment_id';
 
     /**
+     * Mercado Pago Notification Id - Block Name.
+     */
+    public const MP_NOTIFICATION_ID = 'notification_id';
+
+    /**
      * Response Payment Id - Block name.
      */
     public const RESPONSE_PAYMENT_ID = 'id';
@@ -102,10 +107,10 @@ class FetchPaymentClient implements ClientInterface
         $url = $this->config->getApiUrl();
         $clientConfigs = $this->config->getClientConfigs();
         $clientHeaders = $this->config->getClientHeaders($storeId);
-        $paymentId = $request[self::MP_PAYMENT_ID];
+        $notificationId = $request[self::MP_NOTIFICATION_ID];
 
         try {
-            $client->setUri($url.'/v1/payments/'.$paymentId);
+            $client->setUri($url.'/alpha/asgard/notification/'.$notificationId);
             $client->setConfig($clientConfigs);
             $client->setHeaders($clientHeaders);
             $client->setMethod(ZendClient::GET);
@@ -128,14 +133,15 @@ class FetchPaymentClient implements ClientInterface
             }
             $this->logger->debug(
                 [
-                    'url'      => $url.'/v1/payments/'.$paymentId,
+                    'url'      => $url.'/alpha/asgard/notification/'.$notificationId,
                     'response' => $this->json->serialize($data),
+                    'fetch-result' => $this->json->serialize($data),
                 ]
             );
         } catch (InvalidArgumentException $exc) {
             $this->logger->debug(
                 [
-                    'url'       => $url.'/v1/payments/'.$paymentId,
+                    'url'       => $url.'/alpha/asgard/notification/'.$notificationId,
                     'response'  => $this->json->serialize($transferObject->getBody()),
                     'error'     => $exc->getMessage(),
                 ]
