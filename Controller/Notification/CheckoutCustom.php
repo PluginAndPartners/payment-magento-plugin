@@ -254,7 +254,7 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
         $order = $this->fetchStatus->fetch($order->getEntityId(), 'checkout custom');
 
         $this->logger->debug([
-            'Class'     => 'CheckoutPro',
+            'Class'     => 'CheckoutCustom',
             'Action'    => 'After fetch',
             'order'     => $order->getIncrementId(),
             'state'     => $order->getState(),

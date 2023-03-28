@@ -59,16 +59,77 @@ class FetchStatus extends AbstractModel
         $this->logger->debug([
             'Caller class' => $caller,
             'Action'    => 'Fetching',
-            'Order state' => $order->getState(),
-            'Order status' => $order->getStatus(),
+            'Order id' => $orderId,
+        ]);
+
+        // $this->logger->debug(['1' => '',]);
+        $orderGetAppliedRuleIds = $order->getAppliedRuleIds() ?? 'null';
+        // $this->logger->debug(['getAppliedRuleIds' => $orderGetAppliedRuleIds,]);
+        $orderGetBaseSubtotal = $order->getBaseSubtotal() ?? 'null';
+        // $this->logger->debug(['orderGetBaseSubtotal' => $orderGetBaseSubtotal,]);
+        $orderGetExtOrderId = $order->getExtOrderId() ?? 'null';
+        // $this->logger->debug(['orderGetExtOrderId' => $orderGetExtOrderId,]);
+        $orderGetIncrementId = $order->getIncrementId() ?? 'null';
+        // $this->logger->debug(['orderGetIncrementId' => $orderGetIncrementId,]);
+        $orderGetProtectCode = $order->getProtectCode() ?? 'null';
+        // $this->logger->debug(['orderGetProtectCode' => $orderGetProtectCode,]);
+        $orderGetQuoteId = $order->getQuoteId() ?? 'null';
+        // $this->logger->debug(['orderGetQuoteId' => $orderGetQuoteId,]);
+        $orderGetStatus = $order->getStatus() ?? 'null';
+        // $this->logger->debug(['orderGetStatus' => $orderGetStatus,]);
+        $orderGetState = $order->getState() ?? 'null';
+        // $this->logger->debug(['orderGetState' => $orderGetState,]);
+
+        $this->logger->debug([
+            'Order' => 'data:',
+            'Order rule ids' => $orderGetAppliedRuleIds,
+            'Order getBaseSubtotal' => $orderGetBaseSubtotal,
+            'Order getExtOrderId' => $orderGetExtOrderId,
+            'Order getIncrementId' => $orderGetIncrementId,
+            'Order getProtectCode' => $orderGetProtectCode,
+            'Order getQuoteId' => $orderGetQuoteId,
+            'Order status' => $orderGetStatus,
+            'Order getState' => $orderGetState,
         ]);
         
         $payment = $order->getPayment();
+        
+        // $this->logger->debug(['1' => '',]);
+        $paymentgetAdditionalData = $payment->getAdditionalData() ?? 'null';
+        // $this->logger->debug(['2' => $paymentgetAdditionalData,]);
+        $paymentgetAdditionalInformation = $payment->getAdditionalInformation() ?? 'null';
+        // $this->logger->debug(['3' => $paymentgetAdditionalInformation,]);
+        $paymentgetCcType = $payment->getCcType() ?? 'null';
+        // $this->logger->debug(['9' => $paymentgetCcType,]);
+        $paymentgetEntityId = $payment->getEntityId() ?? 'null';
+        // $this->logger->debug(['14' => $paymentgetEntityId,]);
+        $paymentgetLastTransId = $payment->getLastTransId() ?? 'null';
+        // $this->logger->debug(['15' => $paymentgetLastTransId,]);
+        $paymentgetMethod = $payment->getMethod() ?? 'null';
+        // $this->logger->debug(['16' => $paymentgetMethod,]);
+        $paymentgetParentId = $payment->getParentId() ?? 'null';
+        // $this->logger->debug(['14' => $paymentgetParentId,]);
+
+        $this->logger->debug([
+            'Caller class' => $caller,
+            'Action'    => 'Payment data',
+            'Order id' => $orderId,
+            'Payment' => 'data:',
+            'Payment getAdditionalData' => $payment->getAdditionalData(),
+            'Payment getAdditionalInformation' => $payment->getAdditionalInformation(),
+            'Payment getCcType' => $payment->getCcType(),
+            'Payment getEntityId' => $payment->getEntityId(),
+            'Payment getLastTransId' => $payment->getLastTransId(),
+            'Payment getMethod' => $payment->getMethod(),
+            'Payment getParentId' => $payment->getParentId(),
+        ]);
 
         try {
             $this->logger->debug([
                 'Caller class' => $caller,
                 'Action'    => 'Before update',
+                'Entity id' => $payment->getEntityId(),
+                'Parent id' => $payment->getParentId(),
             ]);
             $payment->update(true);
             $this->logger->debug([
@@ -99,9 +160,12 @@ class FetchStatus extends AbstractModel
                 $this->logger->debug([
                     'Action'    => 'Blocked updating complete order status',
                 ]);
-                // $order = $payment->getOrder();
-                // $order->setState(Order::STATE_CLOSED);
-                // $order->setStatus('closed');
+                $order = $payment->getOrder();
+                $order->setState(Order::STATE_CLOSED);
+                $order->setStatus('closed');
+                $this->logger->debug([
+                    'Action'    => 'Updated to closed',
+                ]);
                 
             } else {
                 $order = $payment->getOrder();
@@ -114,14 +178,14 @@ class FetchStatus extends AbstractModel
             }
         }
 
-        $order->save();
+        // $order->save();
 
-        $this->logger->debug([
-            'Caller class' => $caller,
-            'Action'    => 'First save',
-            'Order state' => $order->getState(),
-            'Order status' => $order->getStatus(),
-        ]);
+        // $this->logger->debug([
+        //     'Caller class' => $caller,
+        //     'Action'    => 'First save',
+        //     'Order state' => $order->getState(),
+        //     'Order status' => $order->getStatus(),
+        // ]);
 
         $this->writeln(
             '<info>'.
@@ -138,7 +202,7 @@ class FetchStatus extends AbstractModel
 
         $this->logger->debug([
             'Caller class' => $caller,
-            'Action'    => 'Second save',
+            'Action'    => 'Save',
             'Order state' => $order->getState(),
             'Order status' => $order->getStatus(),
         ]);
