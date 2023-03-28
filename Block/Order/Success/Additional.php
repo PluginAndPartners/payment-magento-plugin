@@ -13,6 +13,7 @@ use Magento\Framework\App\Http\Context as HttpContext;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Sales\Model\Order\Config;
+use Magento\Framework\View\Asset\Repository;
 
 /**
  * Success page additional information.
@@ -35,6 +36,11 @@ class Additional extends Template
     protected $httpContext;
 
     /**
+     * @var Repository
+     */
+    protected $_assetRepo;
+
+    /**
      * @param Context     $context
      * @param Session     $checkoutSession
      * @param Config      $orderConfig
@@ -46,20 +52,22 @@ class Additional extends Template
         Session $checkoutSession,
         Config $orderConfig,
         HttpContext $httpContext,
+        Repository $assetRepo,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->checkoutSession = $checkoutSession;
         $this->orderConfig = $orderConfig;
         $this->httpContext = $httpContext;
+        $this->_assetRepo = $assetRepo;
 
-        if ($this->getMethodCode() === 'mercadopago_paymentmagento_boleto') {
-            $this->setTemplate('MercadoPago_PaymentMagento::order/success/boleto.phtml');
-        } elseif ($this->getMethodCode() === 'mercadopago_paymentmagento_pec') {
-            $this->setTemplate('MercadoPago_PaymentMagento::order/success/pec.phtml');
-        } elseif ($this->getMethodCode() === 'mercadopago_paymentmagento_pix') {
+        $methodCode = $this->getMethodCode();
+
+        if ($methodCode === 'mercadopago_paymentmagento_payment_methods_off') { 
+            $this->setTemplate('MercadoPago_PaymentMagento::order/success/payment-method-off.phtml');
+        } elseif ($methodCode === 'mercadopago_paymentmagento_pix') {
             $this->setTemplate('MercadoPago_PaymentMagento::order/success/pix.phtml');
-        } elseif (str_contains($this->getMethodCode(), 'mercadopago_paymentmagento')) {
+        } elseif (str_contains($methodCode, 'mercadopago_paymentmagento')) {
             $this->setTemplate('MercadoPago_PaymentMagento::order/success/default.phtml');
         }
     }
@@ -96,5 +104,15 @@ class Additional extends Template
     public function getInfo(string $info)
     {
         return  $this->getPayment()->getInfoInstance()->getAdditionalInformation($info);
+    }
+
+    /**
+     * Get Logo Mercado Pago.
+     *     *
+     * @return string
+     */
+    public function getLogoMP()
+    {
+       return $this->_assetRepo->getUrl('MercadoPago_PaymentMagento::images/core/logo.svg');
     }
 }
