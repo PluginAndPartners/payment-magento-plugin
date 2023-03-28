@@ -104,13 +104,6 @@ class FetchPaymentClient implements ClientInterface
         $clientHeaders = $this->config->getClientHeaders($storeId);
         $paymentId = $request[self::MP_PAYMENT_ID];
 
-        $this->logger->debug([
-            'Caller class' => 'FetchPaymentClient',
-            'Action'    => 'Place request',
-            'payment id' => $paymentId,
-            'request' => $request,
-        ]);
-
         try {
             $client->setUri($url.'/v1/payments/'.$paymentId);
             $client->setConfig($clientConfigs);
@@ -135,7 +128,6 @@ class FetchPaymentClient implements ClientInterface
             }
             $this->logger->debug(
                 [
-                    'Fetch payment client' => 'valid',
                     'url'      => $url.'/v1/payments/'.$paymentId,
                     'response' => $this->json->serialize($data),
                 ]
@@ -143,7 +135,6 @@ class FetchPaymentClient implements ClientInterface
         } catch (InvalidArgumentException $exc) {
             $this->logger->debug(
                 [
-                    'Fetch payment client' => 'error',
                     'url'       => $url.'/v1/payments/'.$paymentId,
                     'response'  => $this->json->serialize($transferObject->getBody()),
                     'error'     => $exc->getMessage(),

@@ -75,7 +75,6 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
         $this->logger->debug([
             'action'    => 'checkout_custom',
             'payload'   => $response,
-            'transaction id' => $mpTransactionId,
         ]);
 
         if ($mpStatus === 'refunded') {
@@ -102,14 +101,6 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
         $mpStatus,
         $mpAmountRefund
     ) {
-        $this->logger->debug([
-            'Checkout type'    => 'Custom',
-            'Action' => 'initProcess',
-            'Mp payment status' => $mpStatus,
-            'Transaction id' => $mpTransactionId,
-            'tnx' => $txnType,
-        ]);
-
         $searchCriteria = $this->searchCriteria->addFilter('txn_id', $mpTransactionId)
             ->addFilter('txn_type', $txnType)
             ->create();
@@ -131,31 +122,10 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
             return $result;
         }
 
-        $this->logger->debug([
-            'Checkout type'    => 'Custom',
-            'Action'    => 'for each transaction',
-        ]);
-
         foreach ($transactions as $transaction) {
             $order = $this->getOrderData($transaction->getOrderId());
 
-            $this->logger->debug([
-                'Checkout type'    => 'Custom',
-                'Mp status' => $mpStatus,
-                'Order status'    => $order->getStatus(),
-                'Order id' => $transaction->getOrderId(),
-            ]);
-
             $process = $this->processNotification($mpStatus, $order, $mpAmountRefund);
-
-            $this->logger->debug([
-                'Checkout type'    => 'Custom',
-                'Action'    => 'After process notification',
-                'code' => $process['code'],
-                'msg' => $process['msg'],
-                'order status' => $order->getStatus(),
-                'order state' => $order->getState(),
-            ]);
 
             /** @var ResultInterface $result */
             $result = $this->createResult(
@@ -165,11 +135,6 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
 
             return $result;
         }
-
-        $this->logger->debug([
-            'Checkout type'    => 'Custom',
-            'Action'    => 'No transactions',
-        ]);
 
         /** @var ResultInterface $result */
         $result = $this->createResult(200, ['empty' => null]);
@@ -191,48 +156,22 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
         $order,
         $mpAmountRefund = null
     ) {
-        $this->logger->debug([
-            'Checkout type'    => 'Custom',
-            'Action'    => 'Process notification',
-            'order status' => $order->getStatus(),
-        ]);
-
         $result = [];
 
-        $isNotApplicable = $this->filterInvalidNotification($mpStatus, $order, $mpAmountRefund, 'cho custom');
+        $isNotApplicable = $this->filterInvalidNotification($mpStatus, $order, $mpAmountRefund);
 
         if ($isNotApplicable['isInvalid']) {
-            if ($isNotApplicable['code'] === 999) {
-                $this->logger->debug([
-                    'Checkout type'    => 'Custom',
-                    'action'    => 'Refund for order not closed, proceeding',
-                ]);
-                
+            if (strcmp($isNotApplicable['msg'], 'Refund notification for order refunded directly in Mercado Pago.')) {
                 $result = [
-                    'isInvalid' => false,
-                    'code'      => 200,
                     'msg'       => [
-                        'error'   => 200,
-                        'message' => __('Order not yet closed in Magento.'),
-                        'state'   => $order->getState(),
-                        'tatus'   => $order->getStatus(),
+                        'message' => __('Refund notification for order not yet closed in Magento, updating payment details'),
                     ],
                 ];
 
-            } else if ($isNotApplicable['code'] === 888) {
-                $this->logger->debug([
-                    'Checkout type'    => 'Custom',
-                    'action'    => 'Refund for order already closed, proceeding',
-                ]);
-                
+            } else if (strcmp($isNotApplicable['msg'], 'Refund notification for order already closed.')) {
                 $result = [
-                    'isInvalid' => false,
-                    'code'      => 200,
                     'msg'       => [
-                        'error'   => 200,
-                        'message' => __('Order already closed in Magento.'),
-                        'state'   => $order->getState(),
-                        'tatus'   => $order->getStatus(),
+                        'message' => __('Refund notification, updating payment details.'),
                     ],
                 ];
 
@@ -241,26 +180,7 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
             }
         }
 
-        $this->logger->debug([
-            'Checkout type'    => 'Custom',
-            'Notification validity'    => 'valid',
-            'Action'    => 'Before fetch',
-            'order'     => $order->getIncrementId(),
-            'state'     => $order->getState(),
-            'status'    => $order->getStatus(),
-            'entity id' => $order->getEntityId(),
-        ]);
-
-        $order = $this->fetchStatus->fetch($order->getEntityId(), 'checkout custom');
-
-        $this->logger->debug([
-            'Class'     => 'CheckoutCustom',
-            'Action'    => 'After fetch',
-            'order'     => $order->getIncrementId(),
-            'state'     => $order->getState(),
-            'status'    => $order->getStatus(),
-            'entity id' => $order->getEntityId(),
-        ]);
+        $order = $this->fetchStatus->fetch($order->getEntityId());
 
         $result = [
             'code'  => 200,
@@ -270,12 +190,6 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
                 'status'    => $order->getStatus(),
             ],
         ];
-
-        $this->logger->debug([
-            'Checkout type'    => 'Custom',
-            'Action'    => 'Notification processed',
-            'msg'   => $result,
-        ]);
 
         return $result;
     }
