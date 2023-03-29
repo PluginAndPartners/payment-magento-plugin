@@ -31,6 +31,7 @@
                 <item name="mercadopago_paymentmagento_serfin_config_provider" xsi:type="object">MercadoPago\PaymentMagento\Model\Ui\ConfigProviderSerfin</item>
                 <item name="mercadopago_paymentmagento_pagoefectivo_config_provider" xsi:type="object">MercadoPago\PaymentMagento\Model\Ui\ConfigProviderPagoEfectivo</item>
                 <item name="mercadopago_paymentmagento_webpay_config_provider" xsi:type="object">MercadoPago\PaymentMagento\Model\Ui\ConfigProviderWebpay</item>
+                <item name="mercadopago_paymentmagento_twocc_config_provider" xsi:type="object">MercadoPago\PaymentMagento\Model\Ui\ConfigProviderTwoCc</item>
             </argument>
         </arguments>
     </type>
@@ -146,6 +147,13 @@
             </argument>
         </arguments>
     </type>
+    <type name="MercadoPago\PaymentMagento\Block\Sales\Info\TwoCc">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">1</item>
+            </argument>
+        </arguments>
+    </type>
     <type name="MercadoPago\PaymentMagento\Block\Sales\Info\Webpay">
         <arguments>
             <argument name="data" xsi:type="array">
@@ -157,6 +165,13 @@
         <arguments>
             <argument name="methodCodes" xsi:type="array">
                 <item name="mercadopago_paymentmagento_cc" xsi:type="const">MercadoPago\PaymentMagento\Gateway\Config\ConfigCc::METHOD</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Payment\Model\CcGenericConfigProvider">
+        <arguments>
+            <argument name="methodCodes" xsi:type="array">
+                <item name="mercadopago_paymentmagento_twocc" xsi:type="const">MercadoPago\PaymentMagento\Gateway\Config\ConfigTwoCc::METHOD</item>
             </argument>
         </arguments>
     </type>
