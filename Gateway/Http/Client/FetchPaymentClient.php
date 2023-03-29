@@ -34,6 +34,11 @@ class FetchPaymentClient implements ClientInterface
     public const STORE_ID = 'store_id';
 
     /**
+     * Store Id - Block name.
+     */
+    public const NOTIFICATION_ID = 'notificationId';
+
+    /**
      * Mercado Pago Payment Id - Block Name.
      */
     public const MP_PAYMENT_ID = 'mp_payment_id';
@@ -103,9 +108,11 @@ class FetchPaymentClient implements ClientInterface
         $clientConfigs = $this->config->getClientConfigs();
         $clientHeaders = $this->config->getClientHeaders($storeId);
         $paymentId = $request[self::MP_PAYMENT_ID];
+        $notificationId = $request[self::NOTIFICATION_ID];
 
         try {
-            $client->setUri($url.'/v1/payments/'.$paymentId);
+            $client->setUri($url.'/alpha/asgard/notification/'.$notificationId);
+            //$client->setUri($url.'/v1/payments/'.$paymentId);
             $client->setConfig($clientConfigs);
             $client->setHeaders($clientHeaders);
             $client->setMethod(ZendClient::GET);
