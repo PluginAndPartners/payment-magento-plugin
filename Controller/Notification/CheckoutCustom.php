@@ -74,7 +74,7 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
 
         $this->logger->debug([
             'action'    => 'checkout_custom',
-            'payload'   => $mercadopagoData,
+            'payload'   => $response,
         ]);
 
         if ($mpStatus === 'refunded') {
@@ -161,10 +161,26 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
         $isNotApplicable = $this->filterInvalidNotification($mpStatus, $order, $mpAmountRefund);
 
         if ($isNotApplicable['isInvalid']) {
-            return $isNotApplicable;
+            if (strcmp($isNotApplicable['msg'], 'Refund notification for order refunded directly in Mercado Pago.')) {
+                $result = [
+                    'msg'       => [
+                        'message' => __('Refund notification for order not yet closed in Magento, updating payment details'),
+                    ],
+                ];
+
+            } else if (strcmp($isNotApplicable['msg'], 'Refund notification for order already closed.')) {
+                $result = [
+                    'msg'       => [
+                        'message' => __('Refund notification, updating payment details.'),
+                    ],
+                ];
+
+            } else {
+                return $isNotApplicable;
+            }
         }
 
-        $this->fetchStatus->fetch($order->getEntityId());
+        $order = $this->fetchStatus->fetch($order->getEntityId());
 
         $result = [
             'code'  => 200,

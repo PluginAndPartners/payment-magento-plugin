@@ -46,31 +46,36 @@ class FetchStatus extends AbstractModel
      * Command Fetch.
      *
      * @param int $orderId
+     * @param string $caller
      *
-     * @return void
+     * @return Order $order
      */
     public function fetch($orderId)
     {
         $this->writeln('Init Fetch Status');
-
         /** @var Order $order */
         $order = $this->order->load($orderId);
 
+        $this->logger->debug([
+            'Action'    => 'Fetching',
+            'Order id' => $orderId,
+        ]);
         $payment = $order->getPayment();
-
+        
         try {
             $payment->update(true);
         } catch (Exception $exc) {
             $this->writeln('<error>'.$exc->getMessage().'</error>');
         }
 
+        /** Sets order with state Payment Review if order status is not closed */
         if ($order->getState() === Order::STATE_PAYMENT_REVIEW) {
-            $order = $payment->getOrder();
-            $order->setState(Order::STATE_NEW);
-            $order->setStatus('pending');
+            if ($order->getStatus() !== Order::STATE_CLOSED) {
+                $order = $payment->getOrder();
+                $order->setState(Order::STATE_NEW);
+                $order->setStatus('pending');
+            }
         }
-
-        $order->save();
 
         $this->writeln(
             '<info>'.
@@ -86,5 +91,7 @@ class FetchStatus extends AbstractModel
         $order->save();
 
         $this->writeln(__('Finished'));
+
+        return $order;
     }
 }
