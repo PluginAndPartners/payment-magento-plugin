@@ -66,7 +66,7 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
         }
 
         $mpAmountRefund = null;
-        $txnType = 'capture';
+        $txnType = 'authorization';
         $response = $this->getRequest()->getContent();
         $mercadopagoData = $this->json->unserialize($response);
         $mpTransactionId = $mercadopagoData['transaction_id'];
