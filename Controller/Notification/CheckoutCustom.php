@@ -85,7 +85,6 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
                     $url = $this->config->getApiUrl();
                     $clientConfigs = $this->config->getClientConfigs();
                     $clientHeaders = $this->config->getClientHeaders($storeId);
-
                     $client->setUri($url.'/v1/asgard/notification/'.$notificationId);
                     $client->setConfig($clientConfigs);
                     $client->setHeaders($clientHeaders);
@@ -93,7 +92,6 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
                     $responseBody = $client->request()->getBody();
                     $respData = $this->json->unserialize($responseBody);
                     $mpTransactionId = $respData["payments_details"][0]["id"];
-
                 } catch (Exception $e) {
                     $this->logger->debug(['exception' => $e->getMessage()]);
                 }
