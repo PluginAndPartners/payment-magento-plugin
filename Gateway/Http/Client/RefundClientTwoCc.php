@@ -107,6 +107,8 @@ class RefundClientTwoCc implements ClientInterface
     $clientConfigs = $this->config->getClientConfigs();
     $clientHeaders = $this->config->getClientHeaders($storeId);
 
+    $status = '';
+
     $clientConfigs = array_merge_recursive($clientConfigs, [
       self::X_IDEMPOTENCY_KEY => $request[self::X_IDEMPOTENCY_KEY],
     ]);
@@ -129,13 +131,6 @@ class RefundClientTwoCc implements ClientInterface
 
       $responseBody = $client->request()->getBody();
       $data = $this->json->unserialize($responseBody);
-
-      $response = array_merge(
-        [
-          self::RESULT_CODE  => 0,
-        ],
-        $data
-      );
 
       $refundIds = [];
 
