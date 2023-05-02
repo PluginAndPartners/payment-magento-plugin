@@ -92,7 +92,7 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
                     $responseBody = $client->request()->getBody();
                     $respData = $this->json->unserialize($responseBody);
                     $mpTransactionId = $respData["payments_details"][0]["id"];
-        
+
                 } catch (Exception $e) {
                     $this->logger->debug(['exception' => $e->getMessage()]);
                 }
