@@ -106,6 +106,7 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
         return $this->initProcess($mpTransactionId, $mpStatus, $mpAmountRefund, $notificationId, $paymentsDetails);
     }
 
+    
     /**
      * Init Process.
      *
