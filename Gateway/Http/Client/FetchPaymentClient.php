@@ -121,7 +121,7 @@ class FetchPaymentClient implements ClientInterface
         $notificationId = $request[self::NOTIFICATION_ID];
 
         try {
-            $client->setUri($url.'/v1/asgard/notification/'.$notificationId);
+            $client->setUri($url.'/beta/asgard/notification/'.$notificationId);
             $client->setConfig($clientConfigs);
             $client->setHeaders($clientHeaders);
             $client->setMethod(ZendClient::GET);
@@ -144,7 +144,7 @@ class FetchPaymentClient implements ClientInterface
             }
             $this->logger->debug(
                 [
-                    'url'      => $url.'/v1/asgard/notification/'.$notificationId,
+                    'url'      => $url.'/beta/asgard/notification/'.$notificationId,
                     'response' => $this->json->serialize($data),
                 ]
             );

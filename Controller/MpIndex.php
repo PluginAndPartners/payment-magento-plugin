@@ -285,7 +285,7 @@ abstract class MpIndex extends Action
                 $result = [
                 'isInvalid' => true,
                 'code'      => 200,
-                'msg'       => __('Refund notification for order already closed.'),
+                'msg'       => 'Refund notification for order already closed.',
                 ];
     
                 return $result;
@@ -373,7 +373,7 @@ abstract class MpIndex extends Action
                 $result = [
                     'isInvalid'     => true,
                     'code'          => 200,
-                    'msg'           => __('Refund notification for order refunded directly in Mercado Pago.'),
+                    'msg'           => 'Refund notification for order refunded directly in Mercado Pago.',
                     'description'   => __('The order %1, was refunded directly on Mercado Pago, you need to check stock of sold items.',
                     $order->getIncrementId()),
                 ];
@@ -381,7 +381,7 @@ abstract class MpIndex extends Action
                 $result = [
                     'isInvalid'     => true,
                     'code'          => 200,
-                    'msg'           => __('Failed to process refund notification.'),
+                    'msg'           => 'Failed to process refund notification.',
                     'description'   => __('The order %1, was refunded directly on Mercado Pago, but an error occured when refunding offline, you need to check order refunds and stock of sold items.',
                     $order->getIncrementId()),
                 ];
