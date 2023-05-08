@@ -75,28 +75,29 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
         $paymentsDetails = $mercadopagoData['payments_details'];
 
         if ($mpStatus === 'refunded') {
-            $mpAmountRefund = $mercadopagoData['total_refunded'];
-
-            if(strpos($notificationId, 'TP-') !== false) {
-                try {
-                    /** @var ZendClient $client */
-                    $client = $this->httpClientFactory->create();
-                    $storeId = $mercadopagoData["payments_metadata"]["store_id"];
-                    $url = $this->config->getApiUrl();
-                    $clientConfigs = $this->config->getClientConfigs();
-                    $clientHeaders = $this->config->getClientHeaders($storeId);
-                    $client->setUri($url.'/v1/asgard/notification/'.$notificationId);
-                    $client->setConfig($clientConfigs);
-                    $client->setHeaders($clientHeaders);
-                    $client->setMethod(ZendClient::GET);
-                    $responseBody = $client->request()->getBody();
-                    $respData = $this->json->unserialize($responseBody);
-                    $mpTransactionId = $respData["payments_details"][0]["id"];
+            try {
+                /** @var ZendClient $client */
+                $client = $this->httpClientFactory->create();
+                $storeId = $mercadopagoData["payments_metadata"]["store_id"];
+                $url = $this->config->getApiUrl();
+                $clientConfigs = $this->config->getClientConfigs();
+                $clientHeaders = $this->config->getClientHeaders($storeId);
+                
+                $client->setUri($url.'/v1/asgard/notification/'.$notificationId);
+                $client->setConfig($clientConfigs);
+                $client->setHeaders($clientHeaders);
+                $client->setMethod(ZendClient::GET);
+                $responseBody = $client->request()->getBody();
+                $respData = $this->json->unserialize($responseBody);
+                if (
+                    !empty($respData["multiple_payment_transaction_id"])
+                ) {
+                    $mpTransactionId = $respData["multiple_payment_transaction_id"];
+                }
 
                 } catch (Exception $e) {
                     $this->logger->debug(['exception' => $e->getMessage()]);
                 }
-            }
         }
 
         $this->logger->debug([
