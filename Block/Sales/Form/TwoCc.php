@@ -2,7 +2,6 @@
 /**
  * Copyright © MercadoPago. All rights reserved.
  *
- * @author      Mercado Pago
  * @license     See LICENSE for license details.
  */
 
@@ -15,12 +14,12 @@ use Magento\Payment\Block\Form\Cc as NativeCc;
  *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
-class Card extends NativeCc
+class TwoCc extends NativeCc
 {
     /**
-     * Cc template.
+     * TwoCc template.
      *
      * @var string
      */
-    protected $_template = 'MercadoPago_AdbPayment::form/cc.phtml';
+    protected $_template = 'MercadoPago_AdbPayment::form/twocc.phtml';
 }
