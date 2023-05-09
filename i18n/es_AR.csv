@@ -201,12 +201,6 @@ Facebook,Facebook
 "Set within your account","Definir en tu cuenta"
 "Minimum amount for payment with this payment method.","Monto mínimo para este medio de pago."
 "Maximum amount for payment with this payment method.","Monto máximo para este medio de pago."
-PayCash,PayCash
-"Minimum amount to pay with PayCash.","Monto mínimo a pagar con PayCash."
-"Maximum amount to pay with PayCash.","Monto máximo a pagar con PayCash."
-"Casas Lotéricas","Casas Lotéricas"
-"Minimum amount to pay with Pec.","Monto mínimo a pagar con Pec."
-"Maximum amount to pay with Pec.","Monto máximo a pagar con Pec."
 Pse,Pse
 "Minimum amount to pay with Pse.","Monto mínimo a pagar con Pse."
 "Maximum amount to pay with Pse.","Monto máximo a pagar con Pse."
@@ -217,7 +211,6 @@ Webpay,Webpay
 "User Id","Código de identificación"
 "User Email","E-mail de usuario"
 "User Name","Nombre"
-"Funder restricted.","Funder restricted."
 "Review the card number.","Review the card number."
 "Review the due date.","Review the due date."
 "Review the data.","Review the data."

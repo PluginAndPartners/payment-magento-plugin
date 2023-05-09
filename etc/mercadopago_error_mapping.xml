@@ -18,9 +18,6 @@
         <message message="It was not possible to complete the payment due to a communication error. Please try again later or use another payment method." translate="true">It was not possible to complete the payment due to a communication error. Please try again later or use another payment method.</message>
         <!-- V1 Errors -->
         <message code="16001" translate="true">Funder is not a meliplace.</message>
-        <message code="16000" translate="true"></message>
-        <message code="16001" translate="true">.</message>
-        <message code="16002" translate="true">Funder restricted.</message>
         <message code="16003" translate="true">The Payment Method Reference Id is wrong.</message>
         <message code="16004" translate="true">The Merchant is not a meliplace.</message>
         <message code="16005" translate="true">Store id is empty.</message>
