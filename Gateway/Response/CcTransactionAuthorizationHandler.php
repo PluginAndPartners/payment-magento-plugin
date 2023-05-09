@@ -13,7 +13,6 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
 use MercadoPago\AdbPayment\Gateway\Config\Config;
-use MercadoPago\AdbPayment\Gateway\Data\Checkout\RoundGrandTotal;
 
 /**
  * Gateway response Authorizing a Card Payment.
@@ -46,11 +45,6 @@ class CcTransactionAuthorizationHandler implements HandlerInterface
     public const AUTHORIZED = 'authorized';
 
     /**
-     * @var RoundGrandTotal
-     */
-    protected $roundGrandTotal;
-
-    /**
      * @var Config
      */
     protected $config; 
@@ -62,14 +56,13 @@ class CcTransactionAuthorizationHandler implements HandlerInterface
 
     /**
      * @param Json $json
+     * @param Config $config
      */
     public function __construct(
         Json $json,
-        RoundGrandTotal $roundGrandTotal,
         Config $config
     ) {
         $this->json = $json;
-        $this->roundGrandTotal = $roundGrandTotal;
         $this->config = $config;
     }
 
@@ -99,10 +92,8 @@ class CcTransactionAuthorizationHandler implements HandlerInterface
         $order = $payment->getOrder();
 
         $storeId = $order->getStoreId();
-        
-        $siteId = $config->getMpSiteId($storeId);
-
-        $amount = $roundGrandTotal->roundGrandTotal($order->getBaseGrandTotal(), $siteId);
+    
+        $amount = $this->config->formatPrice($order->getBaseGrandTotal(), $storeId);
 
         $status = $response[self::STATUS];
 

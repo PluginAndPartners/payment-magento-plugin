@@ -14,6 +14,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Sales\Api\TransactionRepositoryInterface;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use MercadoPago\AdbPayment\Model\Console\Command\Adminstrative\PaymentExpiration;
+use MercadoPago\AdbPayment\Gateway\Config\Config;
 
 /**
  * Observer Class from Order Cancel.
@@ -36,18 +37,26 @@ class OrderCancelAfterObserver implements ObserverInterface
     protected $paymentExpiration;
 
     /**
+     * @var Config
+     */
+    protected $config; 
+    
+    /**
      * @param SearchCriteriaBuilder          $searchCriteria
      * @param TransactionRepositoryInterface $transactions
      * @param PaymentExpiration              $paymentExpiration
+     * @param Config $config
      */
     public function __construct(
         SearchCriteriaBuilder $searchCriteria,
         TransactionRepositoryInterface $transactions,
-        PaymentExpiration $paymentExpiration
+        PaymentExpiration $paymentExpiration,
+        Config $config
     ) {
         $this->searchCriteria = $searchCriteria;
         $this->transactions = $transactions;
         $this->paymentExpiration = $paymentExpiration;
+        $this->config = $config;
     }
 
     /**
@@ -64,7 +73,9 @@ class OrderCancelAfterObserver implements ObserverInterface
 
         $payment = $order->getPayment();
 
-        $amount = $order->getBaseGrandTotal();
+        $storeId = $order->getStoreId();
+        
+        $amount = $this->config->formatPrice($order->getBaseGrandTotal(), $storeId);
 
         $orderId = $order->getId();
         $storeId = $order->getStoreId();

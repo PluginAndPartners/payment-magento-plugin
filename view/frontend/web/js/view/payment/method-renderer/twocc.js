@@ -101,7 +101,7 @@ define([
                     financeCostAmount = totals.getSegment('finance_cost_amount').value;
                 }
 
-                self.amount(value.base_grand_total - financeCostAmount);
+                self.amount(this.FormattedCurrencyToInstallments(value.base_grand_total - financeCostAmount));
             });
 
             self.inputValueProgress.subscribe((value) => {
@@ -353,11 +353,11 @@ define([
                 amount = amount - inputValueProgress;
             }
 
-            return priceUtils.formatPrice(amount);
+            return this.FormattedCurrencyToInstallments(amount);
         },
 
         formatedInstallmentAmount() {
-            return priceUtils.formatPrice(this.installmentsAmount());
+            return this.FormattedCurrencyToInstallments(this.installmentsAmount());
         },
 
         showFirstCardBlock() {
@@ -375,7 +375,7 @@ define([
 
             return 'second-card-opened-form';
         },
-
+        
         resetFirstCard() {
             this.editFirstCard();
             this.mpPayerDocument('');

@@ -11,6 +11,7 @@ namespace MercadoPago\AdbPayment\Gateway\Response;
 use InvalidArgumentException;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
+use MercadoPago\AdbPayment\Gateway\Config\Config;
 
 /**
  * Gateway Response Payment Fetch.
@@ -108,6 +109,20 @@ class FetchPaymentHandler implements HandlerInterface
     public const MULTIPAYMENT_TRANSACTION_ID = 'multiple_payment_transaction_id';
 
     /**
+     * @var Config
+     */
+    protected $config; 
+
+    /**
+     * @param Config $config
+     */
+    public function __construct(
+        Config $config
+    ) {
+        $this->config = $config;
+    }
+
+    /**
      * Handles.
      *
      * @param array $handlingSubject
@@ -129,8 +144,10 @@ class FetchPaymentHandler implements HandlerInterface
             $payment = $paymentDO->getPayment();
 
             $order = $payment->getOrder();
-            $amount = $order->getGrandTotal();
-            $baseAmount = $order->getBaseGrandTotal();
+            $storeId = $order->getStoreId();
+            
+            $amount = $this->config->formatPrice($order->getGrandTotal(), $storeId);
+            $baseAmount = $this->config->formatPrice($order->getBaseGrandTotal(), $storeId);
 
             if ($response[self::RESPONSE_STATUS] === self::RESPONSE_STATUS_APPROVED) {
                 $payment->registerAuthorizationNotification($baseAmount);

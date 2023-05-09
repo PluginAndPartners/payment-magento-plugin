@@ -84,10 +84,10 @@ define([
             let self = this;
 
             this._super();
+            debugger;
+            self.amount(self.FormattedCurrencyToInstallments(quote.totals().base_grand_total));
 
-            self.amount(quote.totals().base_grand_total);
-
-            self.installmentsAmount(quote.totals().base_grand_total);
+            self.installmentsAmount(self.FormattedCurrencyToInstallments(quote.totals().base_grand_total));
 
             self.mpCardInstallment.subscribe((value) => {
                 self.addFinanceCost();
@@ -637,10 +637,10 @@ define([
         /**
          * Formatted Currency to Installments
          * @param {Float} amount
-         * @return {Boolean}
+         * @return {Float}
          */
         FormattedCurrencyToInstallments(amount) {
-            if (this.getMpSiteId() === 'MCO') {
+            if (this.getMpSiteId() === 'MCO' || this.getMpSiteId() === 'MLC') {
                 return parseFloat(amount).toFixed(0);
             }
             return amount;

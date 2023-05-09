@@ -12,6 +12,7 @@ use InvalidArgumentException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
+use MercadoPago\AdbPayment\Gateway\Config\Config;
 
 /**
  * Gateway response Capture a Card Payment.
@@ -39,17 +40,25 @@ class CcTransactionCaptureHandler implements HandlerInterface
     public const APPROVED = 'approved';
 
     /**
+     * @var Config
+     */
+    protected $config; 
+
+    /**
      * @var Json
      */
     protected $json;
 
     /**
      * @param Json $json
+     * @param Config $config
      */
     public function __construct(
-        Json $json
+        Json $json,
+        Config $config
     ) {
         $this->json = $json;
+        $this->config = $config;
     }
 
     /**
@@ -77,7 +86,9 @@ class CcTransactionCaptureHandler implements HandlerInterface
 
         $order = $payment->getOrder();
 
-        $amount = $order->getBaseGrandTotal();
+        $storeId = $order->getStoreId();
+        
+        $amount = $this->config->formatPrice($order->getBaseGrandTotal(), $storeId);
 
         $status = $response[self::STATUS];
 

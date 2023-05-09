@@ -17,6 +17,7 @@ use MercadoPago\AdbPayment\Api\Data\FinanceCostInterface;
 use MercadoPago\AdbPayment\Api\Data\RulesForFinanceCostInterface;
 use MercadoPago\AdbPayment\Api\FinanceCostManagementInterface;
 
+
 /**
  * Model for application of Financing Cost in Order totals.
  */

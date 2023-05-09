@@ -11,12 +11,28 @@ namespace MercadoPago\AdbPayment\Gateway\Response;
 use InvalidArgumentException;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
+use MercadoPago\AdbPayment\Gateway\Config\Config;
 
 /**
  * Gateway Response Payment Capture.
  */
 class CapturePaymentHandler implements HandlerInterface
 {
+
+    /**
+     * @var Config
+     */
+    protected $config; 
+
+    /**
+     * @param Config $config
+     */
+    public function __construct(
+        Config $config
+    ) {
+        $this->config = $config;
+    }
+    
     /**
      * Handles.
      *
@@ -38,7 +54,8 @@ class CapturePaymentHandler implements HandlerInterface
 
             $payment = $paymentDO->getPayment();
             $order = $payment->getOrder();
-            $amount = $order->getGrandTotal();
+            $storeId = $order->getStoreId();
+            $amount = $this->config->formatPrice($order->getGrandTotal(), $storeId);
 
             $payment->registerCaptureNotification($amount);
         }

@@ -11,6 +11,7 @@ namespace MercadoPago\AdbPayment\Gateway\Response;
 use InvalidArgumentException;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
+use MercadoPago\AdbPayment\Gateway\Config\Config;
 
 /**
  * Gateway Response Payment Accepted..
@@ -38,6 +39,20 @@ class AcceptPaymentHandler implements HandlerInterface
     public const MP_STATUS_DETAIL = 'mp_status_detail';
 
     /**
+     * @var Config
+     */
+    protected $config; 
+
+    /**
+     * @param Config $config
+     */
+    public function __construct(
+        Config $config
+    ) {
+        $this->config = $config;
+    }
+    
+    /**
      * Handles.
      *
      * @param array $handlingSubject
@@ -59,7 +74,10 @@ class AcceptPaymentHandler implements HandlerInterface
             $payment = $paymentDO->getPayment();
 
             $order = $payment->getOrder();
-            $amount = $order->getBaseGrandTotal();
+            
+            $storeId = $order->getStoreId();
+            
+            $amount = $this->config->formatPrice($order->getBaseGrandTotal(), $storeId);
 
             $payment->registerAuthorizationNotification($amount);
             $payment->registerCaptureNotification($amount);
