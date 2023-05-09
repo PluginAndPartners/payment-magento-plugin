@@ -16,27 +16,6 @@
         <message message="Your payment was declined. We recommend that you use the device and payment method you usually use for online shopping." translate="true">Your payment was declined. We recommend that you use the device and payment method you usually use for online shopping.</message>
         <message message="It was not possible to complete the payment. Please use another method to complete the purchase." translate="true">It was not possible to complete the payment. Please use another method to complete the purchase.</message>
         <message message="It was not possible to complete the payment due to a communication error. Please try again later or use another payment method." translate="true">It was not possible to complete the payment due to a communication error. Please try again later or use another payment method.</message>
-        <!-- V1 Errors -->
-        <message code="16001" translate="true">Funder is not a meliplace.</message>
-        <message code="16003" translate="true">The Payment Method Reference Id is wrong.</message>
-        <message code="16004" translate="true">The Merchant is not a meliplace.</message>
-        <message code="16005" translate="true">Store id is empty.</message>
-        <message code="16006" translate="true">Store id is invalid.</message>
-        <message code="16007" translate="true">Meliplace validation error.</message>
-        <message code="16008" translate="true">Meliplace is not enabled.</message>
-        <message code="17000" translate="true">Invalid reserve for the charge.</message>
-        <message code="17001" translate="true">Reservation for the charge failed.</message>
-        <message code="17002" translate="true">Revert for the reservation associated to charge failed.</message>
-        <message code="17100" translate="true">Idempotency value for create charge cannot match with payment id.</message>
-        <message code="17101" translate="true">Charges is currently in process.</message>
-        <message code="17200" translate="true">POST to rule_engine-taxes API fail.</message>
-        <message code="17201" translate="true">POST to rule_engine API fail.</message>
-        <message code="17202" translate="true">movOpId attribute can't be null.</message>
-        <message code="17203" translate="true">To create this openfinance payment, the following parameters are required: payer.identification.type , payer.identification.number.</message>
-        <message code="17204" translate="true">external_operations.source value is not allowed.</message>
-        <message code="17205" translate="true">external_operations.source can't be null.</message>
-        <message code="17206" translate="true">external_operations.id can't be null.</message>
-        <message code="17207" translate="true">external_operations.id must be numeric.</message>
         <!-- Payment Error-->
         <message code="cc_rejected_bad_filled_card_number" translate="true">Review the card number.</message>
         <message code="cc_rejected_bad_filled_date" translate="true">Review the due date.</message>
