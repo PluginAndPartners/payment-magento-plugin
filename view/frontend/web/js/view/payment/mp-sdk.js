@@ -157,6 +157,7 @@ define([
                             if (event.bin.length === 8) {
                                 self.mpCardBin(event.bin);
                                 self.getInstallments();
+                                console.log(self.getInstallments());
                                 window.mp.getPaymentMethods({bin: event.bin}).then((binDetails) => {
                                     codeCardtype = self.getCodeCardType(binDetails.results[0].id);
                                     self.mpSelectedCardType(codeCardtype);
@@ -312,6 +313,9 @@ define([
                 }
 
                 const selectedPayerCost = self.mpCardListInstallments().filter(obj => obj.installments === self.mpCardInstallment())[0];
+
+                console.log(self.mpCardListInstallments())
+
 
                 if (!selectedPayerCost) {
                     return false;

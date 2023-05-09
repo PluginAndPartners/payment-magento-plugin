@@ -12,6 +12,8 @@ use InvalidArgumentException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
+use MercadoPago\AdbPayment\Gateway\Config\Config;
+use MercadoPago\AdbPayment\Gateway\Data\Checkout\RoundGrandTotal;
 
 /**
  * Gateway response Authorizing a Card Payment.
@@ -44,6 +46,16 @@ class CcTransactionAuthorizationHandler implements HandlerInterface
     public const AUTHORIZED = 'authorized';
 
     /**
+     * @var RoundGrandTotal
+     */
+    protected $roundGrandTotal;
+
+    /**
+     * @var Config
+     */
+    protected $config; 
+
+    /**
      * @var Json
      */
     protected $json;
@@ -52,9 +64,13 @@ class CcTransactionAuthorizationHandler implements HandlerInterface
      * @param Json $json
      */
     public function __construct(
-        Json $json
+        Json $json,
+        RoundGrandTotal $roundGrandTotal,
+        Config $config
     ) {
         $this->json = $json;
+        $this->roundGrandTotal = $roundGrandTotal;
+        $this->config = $config;
     }
 
     /**
@@ -82,7 +98,11 @@ class CcTransactionAuthorizationHandler implements HandlerInterface
 
         $order = $payment->getOrder();
 
-        $amount = $order->getBaseGrandTotal();
+        $storeId = $order->getStoreId();
+        
+        $siteId = $config->getMpSiteId($storeId);
+
+        $amount = $roundGrandTotal->roundGrandTotal($order->getBaseGrandTotal(), $siteId);
 
         $status = $response[self::STATUS];
 
