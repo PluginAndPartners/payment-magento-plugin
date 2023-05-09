@@ -261,7 +261,9 @@ class FetchMerchant extends AbstractModel
         $mpSiteId = strtolower((string) $mpSiteId);
         $mpWebSiteUrl = $this->mercadopagoConfig->getMpWebSiteBySiteId();
         $token = $this->getValidateCredentials($storeId);
+        $publicKey = $this->getValidatePublicKey($storeId);
         $fullUrl = $mpWebSiteUrl.$mpSiteId.'/account/credentials';
+        $environment = $this->mercadopagoConfig->getEnvironmentMode($storeId);
 
         if (!$token['success']) {
             if (isset($token['error'])) {
@@ -287,6 +289,33 @@ class FetchMerchant extends AbstractModel
                 $errorMsg = __('Store ID: %1 Not allowed for production use', $storeId);
                 $this->writeln('<error>'.$errorMsg.'</error>');
             }
+        }
+
+        if ($environment === 'production') {
+            if($token['response']['is_test']) {
+                $hasError = true;
+                $this->messageManager->addNotice(
+                    __('Please check %1 store ID credentials, they are test and should be used in sandbox mode, so they have been deleted.', $storeId)
+                );
+                $this->clearData($storeIdIsDefault, $storeId, $webSiteId);
+    
+                $this->cacheTypeList->cleanType('config');
+    
+                return $hasError;
+            }
+        }
+
+        if ($token['response']['client_id'] !== $publicKey['response']['client_id']
+            || $token['response']['is_test'] !== $publicKey['response']['is_test']) {
+            $hasError = true;
+            $this->messageManager->addNotice(
+                __('Please check store id %1 credentials, they are invalid so they were deleted.', $storeId)
+            );
+            $this->clearData($storeIdIsDefault, $storeId, $webSiteId);
+
+            $this->cacheTypeList->cleanType('config');
+
+            return $hasError;
         }
 
         return $hasError;
