@@ -422,7 +422,7 @@ define([
 
             self.installmentWasCalculated(false);
 
-            if (self.installmentsAmount() > self.amount()) {
+            if (self.installmentsAmount() > self.FormattedCurrencyToInstallments(self.amount())) {
                 self.installmentSelected = null;
                 self.mpCardInstallment(null);
                 return;
