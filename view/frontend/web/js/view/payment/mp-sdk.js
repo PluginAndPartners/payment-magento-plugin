@@ -431,7 +431,6 @@ define([
                 return;
             }
 
-
             if (bin.length === 8) {
                 const result = await window.mp.getInstallments({
                     amount: String(self.FormattedCurrencyToInstallments(self.installmentsAmount())),
@@ -685,7 +684,7 @@ define([
          * @returns {Jquery}
          */
         minValueError(minAllowedAmount, amount) {
-            var message = $t('Minimum transaction amount not allowed for the chosen brand. Please choose another flag or make a purchase over ' + priceUtils.formatPrice(minAllowedAmount) + '.');
+            var message = $t('Minimum transaction amount not allowed for the chosen brand. Please choose another flag or make a purchase over %1.').replace('%1', priceUtils.formatPrice(minAllowedAmount));
 
             if (amount < minAllowedAmount){
                 return $('.mp-iframe-card').append('<div class="mp-message-error" id="mp-message-error">' + message + '</div>');
@@ -696,7 +695,7 @@ define([
 
          /**
          * Clear Error Min Value
-         * @return {void}
+         * @return {Jquery}
          */
          clearMinValueError(){
             return $('.mp-message-error').remove(); 
