@@ -313,9 +313,6 @@ define([
 
                 const selectedPayerCost = self.mpCardListInstallments().filter(obj => obj.installments === self.mpCardInstallment())[0];
 
-                console.log(self.mpCardListInstallments())
-
-
                 if (!selectedPayerCost) {
                     return false;
                 }
