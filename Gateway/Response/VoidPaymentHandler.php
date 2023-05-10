@@ -11,7 +11,6 @@ namespace MercadoPago\AdbPayment\Gateway\Response;
 use InvalidArgumentException;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
-use MercadoPago\AdbPayment\Gateway\Config\Config;
 
 /**
  * Payment Void Gateway Response.
@@ -68,19 +67,6 @@ class VoidPaymentHandler implements HandlerInterface
      */
     public const MP_STATUS = 'mp_status';
 
-    /**
-     * @var Config
-     */
-    protected $config; 
-
-    /**
-     * @param Config $config
-     */
-    public function __construct(
-        Config $config
-    ) {
-        $this->config = $config;
-    }
 
     /**
      * Handles.
@@ -103,8 +89,7 @@ class VoidPaymentHandler implements HandlerInterface
             $payment = $paymentDO->getPayment();
 
             $order = $payment->getOrder();
-            $storeId = $order->getStoreId();
-            $amount = $this->config->formatPrice($order->getBaseGrandTotal(), $storeId);
+            $amount = $order->getBaseGrandTotal();
 
             $this->setAddtionalInformation($payment, $response);
 

@@ -12,7 +12,6 @@ use InvalidArgumentException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
-use MercadoPago\AdbPayment\Gateway\Config\Config;
 
 /**
  * Gateway response Authorizing a Card Payment.
@@ -45,25 +44,17 @@ class CcTransactionAuthorizationHandler implements HandlerInterface
     public const AUTHORIZED = 'authorized';
 
     /**
-     * @var Config
-     */
-    protected $config; 
-
-    /**
      * @var Json
      */
     protected $json;
 
     /**
      * @param Json $json
-     * @param Config $config
      */
     public function __construct(
-        Json $json,
-        Config $config
+        Json $json
     ) {
         $this->json = $json;
-        $this->config = $config;
     }
 
     /**
@@ -91,9 +82,7 @@ class CcTransactionAuthorizationHandler implements HandlerInterface
 
         $order = $payment->getOrder();
 
-        $storeId = $order->getStoreId();
-    
-        $amount = $this->config->formatPrice($order->getBaseGrandTotal(), $storeId);
+        $amount = $order->getBaseGrandTotal();
 
         $status = $response[self::STATUS];
 

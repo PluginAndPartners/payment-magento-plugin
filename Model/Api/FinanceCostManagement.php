@@ -136,11 +136,12 @@ class FinanceCostManagement implements FinanceCostManagementInterface
         }
 
         $quoteTotal = $this->quoteTotalRepository->get($cartId);
+        $storeId = $quoteCart->getData(CartInterface::KEY_STORE_ID);
 
-        $grandTotal = $quoteTotal->getBaseGrandTotal();
-        $cardAmount = $rules->getCardAmount();
+        $grandTotal = $this->mpConfig->formatPrice($quoteTotal->getBaseGrandTotal(), $storeId);
+        $cardAmount = $this->mpConfig->formatPrice($rules->getCardAmount(), $storeId);
         $installment = $userSelect->getSelectedInstallment();
-        $totalAmount = round($rules->getTotalAmount(), 2);
+        $totalAmount = $this->mpConfig->formatPrice($rules->getTotalAmount(), $storeId);
         $financeCost = $totalAmount - $cardAmount;
 
         if($rules->getCardIndex() !== 0){

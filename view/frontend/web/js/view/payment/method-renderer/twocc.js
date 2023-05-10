@@ -353,11 +353,15 @@ define([
                 amount = amount - inputValueProgress;
             }
 
-            return this.FormattedCurrencyToInstallments(amount);
+            return this.formatedAmountWithSymbol(this.FormattedCurrencyToInstallments(amount));
         },
 
         formatedInstallmentAmount() {
-            return this.FormattedCurrencyToInstallments(this.installmentsAmount());
+            return this.formatedAmountWithSymbol(this.FormattedCurrencyToInstallments(this.installmentsAmount()));
+        },
+
+        formatedAmountWithSymbol(amount) {
+            return this.currencySymbol() + ' ' + amount;
         },
 
         showFirstCardBlock() {

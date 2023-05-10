@@ -84,7 +84,7 @@ define([
             let self = this;
 
             this._super();
-            debugger;
+            
             self.amount(self.FormattedCurrencyToInstallments(quote.totals().base_grand_total));
 
             self.installmentsAmount(self.FormattedCurrencyToInstallments(quote.totals().base_grand_total));
@@ -157,7 +157,6 @@ define([
                             if (event.bin.length === 8) {
                                 self.mpCardBin(event.bin);
                                 self.getInstallments();
-                                console.log(self.getInstallments());
                                 window.mp.getPaymentMethods({bin: event.bin}).then((binDetails) => {
                                     codeCardtype = self.getCodeCardType(binDetails.results[0].id);
                                     self.mpSelectedCardType(codeCardtype);
