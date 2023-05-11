@@ -29,6 +29,7 @@ use Magento\Sales\Model\Service\CreditmemoService;
 use MercadoPago\AdbPayment\Gateway\Config\Config;
 use MercadoPago\AdbPayment\Model\Console\Command\Notification\CheckoutProAddChildPayment;
 use MercadoPago\AdbPayment\Model\Console\Command\Notification\FetchStatus;
+use Magento\Sales\Model\Order\Payment\Transaction;
 
 /**
  * Class Mercado Pago Index.
