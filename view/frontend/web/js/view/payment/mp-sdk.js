@@ -55,6 +55,7 @@ define([
             installmentsAmount: 0,
             amount: 0,
             installmentsResponse: {},
+            minAllowedAmount: 0,
         },
 
         /** @inheritdoc */
@@ -138,8 +139,7 @@ define([
                     height: '100%',
                     padding: '30px 15px'
                 },
-                codeCardtype,
-                minAllowedAmount;
+                codeCardtype;
 
             self.resetCardForm();
 
@@ -163,10 +163,10 @@ define([
                                 self.getInstallments();
                                 window.mp.getPaymentMethods({bin: event.bin}).then((binDetails) => {
                                     codeCardtype = self.getCodeCardType(binDetails.results[0].id);
-                                    minAllowedAmount = binDetails.results[0].payer_costs[0].min_allowed_amount;
+                                    self.minAllowedAmount = binDetails.results[0].payer_costs[0].min_allowed_amount;
                                     self.mpSelectedCardType(codeCardtype);
                                     self.mpCardType(codeCardtype);
-                                    self.minValueError(minAllowedAmount, self.installmentsAmount());
+                                    self.validateMinValue(self.installmentsAmount());
                                 });
                             }
                         }
@@ -425,7 +425,7 @@ define([
 
             self.installmentWasCalculated(false);
 
-            if (self.installmentsAmount() > self.amount()) {
+            if (self.installmentsAmount() == '' || self.installmentsAmount() > self.amount()) {
                 self.installmentSelected = null;
                 self.mpCardInstallment(null);
                 return;
@@ -678,19 +678,19 @@ define([
         },
 
         /**
-         * Get Min Allowed Amount
-         * @param {String} minAllowedAmount
+         * Minimum value validate
          * @param {String} amount
          * @returns {Jquery}
          */
-        minValueError(minAllowedAmount, amount) {
-            var message = $t('Minimum transaction amount not allowed for the chosen brand. Please choose another flag or make a purchase over %1.').replace('%1', priceUtils.formatPrice(minAllowedAmount));
+        validateMinValue(amount) {
+            var message = $t('Minimum transaction amount not allowed for the chosen brand. Please choose another flag or make a purchase over %1.').replace('%1', priceUtils.formatPrice(this.minAllowedAmount));
 
-            if (amount < minAllowedAmount){
-                return $('.mp-iframe-card').append('<div class="mp-message-error" id="mp-message-error">' + message + '</div>');
+            $('.mp-message-error').remove();
+
+            if (amount < this.minAllowedAmount) {
+
+                return $('.mp-iframe-card').append('<div class="mp-message-error" id="mp-minvalue-error">' + message + '</div>');
             }
-
-            return  $('.mp-message-error').remove();
         },
 
          /**
