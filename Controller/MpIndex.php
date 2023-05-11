@@ -377,7 +377,7 @@ abstract class MpIndex extends Action
             $payment->addTransaction(Transaction::TYPE_REFUND);
             $order->save();
             $payment->update(true);
-            
+
             $creditMemo->setState(1);
             $creditMemo->setBaseGrandTotal($mpAmountRefound);
             $creditMemo->setGrandTotal($mpAmountRefound);
@@ -401,7 +401,6 @@ abstract class MpIndex extends Action
                     $order->getIncrementId()),
                 ];
             }
-
             $order->addCommentToStatusHistory(__('Order refunded.'));
 
             return $result;
