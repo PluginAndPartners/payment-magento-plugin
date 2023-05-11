@@ -81,7 +81,5 @@ class RefundHandler implements HandlerInterface
         if ($response[self::RESULT_CODE]) {
             $paymentDO->getPayment();
         }
-        $payment->addTransaction(Transaction::TYPE_REFUND);
-
     }
 }
