@@ -387,11 +387,6 @@ abstract class MpIndex extends Action
                 ];
             }
 
-            $payment = $order->getPayment();
-            $payment->setTransactionId($transactionId);
-            $payment->setIsTransactionClosed(true);
-            $payment->addTransaction(Transaction::TYPE_REFUND);
-
             $order->addCommentToStatusHistory(__('Order refunded.'));
 
             return $result;
