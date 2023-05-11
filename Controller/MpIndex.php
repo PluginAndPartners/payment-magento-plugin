@@ -360,9 +360,24 @@ abstract class MpIndex extends Action
             $invoice = $this->invoice->loadByIncrementId($invoice->getIncrementId());
             $creditMemo = $this->creditMemoFactory->createByOrder($order);
 
+            $payment = $order->getPayment();
+            $transacId = $payment->getLastTransId();
+            $payment->setTransactionId($transacId."-refund");
+            $payment->setParentTransactionId($transacId);
+
             if ($mpAmountRefound < $creditMemo->getBaseGrandTotal()) {
+                $payment->setIsTransactionClosed(false);
+                $payment->setShouldCloseParentTransaction(false);
                 $creditMemo->setItems([]);
+            } else {
+                $payment->setIsTransactionClosed(true);
+                $payment->setShouldCloseParentTransaction(true);
             }
+            
+            $payment->addTransaction(Transaction::TYPE_REFUND);
+            $order->save();
+            $payment->update(true);
+            
             $creditMemo->setState(1);
             $creditMemo->setBaseGrandTotal($mpAmountRefound);
             $creditMemo->setGrandTotal($mpAmountRefound);
