@@ -73,7 +73,8 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
         $mpStatus = $mercadopagoData['status'];
         $notificationId = $mercadopagoData['notification_id'];
         $paymentsDetails = $mercadopagoData['payments_details'];
-
+        $respData = null;
+        
         if ($mpStatus === 'refunded') {
             try {
                 /** @var ZendClient $client */
@@ -95,9 +96,9 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
                     $mpTransactionId = $respData["multiple_payment_transaction_id"];
                 }
 
-                } catch (Exception $e) {
+            } catch (Exception $e) {
                     $this->logger->debug(['exception' => $e->getMessage()]);
-                }
+            }
         }
 
         $this->logger->debug([
@@ -133,17 +134,14 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
             /** @var TransactionRepositoryInterface $transactions */
             $transactions = $this->transaction->getList($searchCriteria)->getItems();
         } catch (Exception $exc) {
-
             /** @var ResultInterface $result */
-            $result = $this->createResult(
+            return $this->createResult(
                 500,
                 [
                     'error'   => 500,
                     'message' => $exc->getMessage(),
                 ]
             );
-
-            return $result;
         }
 
         $origin = '';
@@ -159,20 +157,18 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
                 foreach ($paymentsDetails as $paymentsDetail) {
                     $refunds = $paymentsDetail['refunds'];
 
-                    foreach ($refunds as $refund) {
-                        $this->logger->debug(['notifying' => $respData['refunds_notifying']]);
-
-                        if (isset($refund['metadata']['origem'])){
-                            $origin = $refund['metadata']['origem'];
-                        }
+                    foreach ($respData['refunds_notifying'] as $refundNotifying) {
                         if (
-                            isset($respData['refunds_notifying'][$refund['id']]) 
-                            && $respData['refunds_notifying'][$refund['id']]['notifying']
+                            isset($refunds[$refundNotifying['id']])
+                            && $refundNotifying['notifying']
                         ) {
-                            $mpAmountRefund = $respData['refunds_notifying'][$refund['id']]['amount'];
+                            if (isset($refunds[$refundNotifying['id']]['metadata']['origem'])) {
+                                $origin = $refund['metadata']['origem'];
+                            }
+                            $mpAmountRefund = $refundNotifying['amount'];
 
                             $process = $this->processNotification($mpStatus, $order, $notificationId, $mpAmountRefund, $origin);
-                            
+                                
                             /** @var ResultInterface $result */
                             $result = $this->createResult(
                                 $process['code'],
@@ -195,8 +191,8 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
 
             if (sizeof($results) === 0) {
                 $result = $this->createResult(
-                    'code' => 422,
-                    'msg' => 'Nothing to proccess'
+                    422,
+                    'Nothing to proccess'
                 );
                 array_push($results, $result);
             }
