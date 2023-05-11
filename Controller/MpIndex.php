@@ -148,7 +148,7 @@ abstract class MpIndex extends Action
         CreditmemoService $creditMemoService,
         Invoice $invoice,
         CheckoutProAddChildPayment $addChildPayment,
-        ZendClientFactory $httpClientFactory,
+        ZendClientFactory $httpClientFactory
     ) {
         parent::__construct($context);
         $this->config = $config;
@@ -386,6 +386,12 @@ abstract class MpIndex extends Action
                     $order->getIncrementId()),
                 ];
             }
+
+            $payment = $order->getPayment();
+            $payment->setTransactionId($transactionId);
+            $payment->setIsTransactionClosed(true);
+            $payment->addTransaction(Transaction::TYPE_REFUND);
+
             $order->addCommentToStatusHistory(__('Order refunded.'));
 
             return $result;
