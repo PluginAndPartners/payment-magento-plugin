@@ -106,6 +106,7 @@ define([
 
             self.inputValueProgress.subscribe((value) => {
                 self.installmentsAmount(value);
+                self.validateMinValue(value);
                 if (self.isSiteIdMCOorMLC() && value){
                     var amount = parseFloat(value.toString().replace(/\D/g, ''));
                     self.installmentsAmount(amount);
