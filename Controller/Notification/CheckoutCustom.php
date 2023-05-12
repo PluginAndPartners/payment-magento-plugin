@@ -15,27 +15,12 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\HTTP\ZendClient;
 use MercadoPago\AdbPayment\Controller\MpIndex;
-use MercadoPago\AdbPayment\Gateway\Config\ConfigCc as MpConfigCc;
 
 /**
  * Controler Notification Checkout Custom - Notification of receivers for Checkout Custom Methods.
  */
 class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
 {
-    /** 
-    * @var MpConfigCc
-    */
-    protected $mpConfigCc;
-
-    /**
-     * @param MpConfigCc $mpConfigCc
-     */
-    public function __construct(
-        MpConfigCc $mpConfigCc
-    ){
-        $this->mpConfigCc = $mpConfigCc;
-    }
-
     /**
      * Create Csrf Validation Exception.
      *
@@ -49,7 +34,6 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
             return null;
         }
     }
-    
 
     /**
      * Validate For Csrf.
@@ -103,6 +87,7 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
             'refund'    => $mpAmountRefund,
             'details'    => $this->json->serialize($paymentsDetails)
         ]);
+
         return $this->initProcess($mpTransactionId, $mpStatus, $mpAmountRefund, $notificationId, $paymentsDetails);
     }
 
@@ -144,13 +129,7 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
         }
 
         foreach ($transactions as $transaction) {
-            $captured = $transaction->getTxnType() === "capture";
-
             $order = $this->getOrderData($transaction->getOrderId());
-
-            if($this->mpConfigCc->isBinaryMode($order->getStoreId()) && $captured){
-                return $this->createResult(200, ['empty' => null]);
-            }
 
             $origin = '';
             if ($mpStatus === 'refunded') {
