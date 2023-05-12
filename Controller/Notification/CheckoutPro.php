@@ -14,6 +14,7 @@ use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Sales\Model\Order\Payment\Transaction;
+use Magento\Framework\HTTP\ZendClient;
 use MercadoPago\AdbPayment\Controller\MpIndex;
 
 /**
@@ -159,11 +160,19 @@ class CheckoutPro extends MpIndex implements CsrfAwareActionInterface
                             && $refundNotifying['notifying']
                         ) {
                             if (isset($refunds[$refundNotifying['id']]['metadata']['origem'])) {
-                                $origin = $refund['metadata']['origem'];
+                                $origin = $refunds[$refundNotifying['id']]['metadata']['origem'];
                             }
                             $mpAmountRefund = $refundNotifying['amount'];
 
-                            $process = $this->processNotification($mpStatus, $order, $notificationId, $mpAmountRefund, $origin);
+                            $process = $this->processNotification(
+                                $mpTransactionId,
+                                $mpStatus,
+                                $childTransactionId,
+                                $order,
+                                $mpAmountRefund,
+                                $mercadopagoData,
+                                $origin
+                            );
                                 
                             /** @var ResultInterface $result */
                             $result = $this->createResult(
