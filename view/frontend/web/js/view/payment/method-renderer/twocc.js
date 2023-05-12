@@ -122,10 +122,6 @@ define([
             self.inputValueProgress(am);
         },
 
-        currencySymbol() {
-            return priceUtils.formatPrice().replaceAll(/[0-9\s\.\,]/g, '');
-        },
-
         initForm() {
             const self = this;
 
@@ -372,10 +368,6 @@ define([
 
         formatedInstallmentAmount() {
             return this.formatedAmountWithSymbol(this.FormattedCurrencyToInstallments(this.installmentsAmount()));
-        },
-
-        formatedAmountWithSymbol(amount) {
-            return this.currencySymbol() + ' ' + amount;
         },
 
         showFirstCardBlock() {

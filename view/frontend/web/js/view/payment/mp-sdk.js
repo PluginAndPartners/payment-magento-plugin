@@ -476,6 +476,14 @@ define([
                 });
             });
         },
+        
+        formatedAmountWithSymbol(amount) {
+            return this.currencySymbol() + ' ' + amount;
+        },
+
+        currencySymbol() {
+            return priceUtils.formatPrice().replaceAll(/[0-9\s\.\,]/g, '');
+        },
 
         /**
          * Get Code Card Type.
@@ -683,7 +691,7 @@ define([
          * @returns {Jquery}
          */
         validateMinValue(amount) {
-            var message = $t('Minimum transaction amount not allowed for the chosen brand. Please choose another flag or make a purchase over %1.').replace('%1', priceUtils.formatPrice(this.minAllowedAmount));
+            var message = $t('Minimum transaction amount not allowed for the chosen brand. Please choose another flag or make a purchase over %1.').replace('%1', this.formatedAmountWithSymbol(this.minAllowedAmount));
 
             $('.mp-message-error').remove();
 
