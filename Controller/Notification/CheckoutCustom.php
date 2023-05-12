@@ -163,7 +163,7 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
                             && $refundNotifying['notifying']
                         ) {
                             if (isset($refunds[$refundNotifying['id']]['metadata']['origem'])) {
-                                $origin = $refund['metadata']['origem'];
+                                $origin = $refunds[$refundNotifying['id']]['metadata']['origem'];
                             }
                             $mpAmountRefund = $refundNotifying['amount'];
 
