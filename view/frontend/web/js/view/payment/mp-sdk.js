@@ -637,7 +637,7 @@ define([
          */
         FormattedCurrencyToInstallments(amount) {
             if (this.getMpSiteId() === 'MCO' || this.getMpSiteId() === 'MLC') {
-                return parseFloat(amount).toFixed(0);
+                return parseFloat(amount ? amount : 0).toFixed(0);
             }
             return amount;
         },

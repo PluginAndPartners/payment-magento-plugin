@@ -106,6 +106,11 @@ define([
 
             self.inputValueProgress.subscribe((value) => {
                 self.installmentsAmount(value);
+                if (self.isSiteIdMCOorMLC() && value){
+                    var amount = parseFloat(value.toString().replace(/\D/g, ''));
+                    self.installmentsAmount(amount);
+                    self.inputValueProgress(amount);
+                }
             });
 
             self.installmentsAmount.subscribe((value) => {
@@ -340,6 +345,14 @@ define([
 
             const v = parseFloat(this.inputValueProgress());
             return v > this.amount() - 1 || v < 1;
+        },
+
+        isSiteIdMCOorMLC() {
+            if (this.getMpSiteId() === 'MCO' || this.getMpSiteId() === 'MLC') {
+                return true;
+            }
+            
+            return false;
         },
 
         /**
