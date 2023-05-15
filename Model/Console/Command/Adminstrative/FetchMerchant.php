@@ -30,6 +30,9 @@ use MercadoPago\AdbPayment\Model\Console\Command\AbstractModel;
  */
 class FetchMerchant extends AbstractModel
 {
+    public const INVALID_CREDENTIAL = 'Your credentials are incorrect. Please double-check in your account your credentials are correct.';
+    public const INVALID_SANDBOX_MODE = 'Your credentials are incorrect. Test credentials have been filled in and should be used in sandbox mode. Please check the credentials again.';
+    public const INVALID_PRODUCTION_MODE = 'Your credentials are incorrect. Production credentials have been filled in and should be used in production mode. Please check the credentials again.';
     /**
      * @var TypeListInterface
      */
@@ -195,89 +198,68 @@ class FetchMerchant extends AbstractModel
         $publicKey = $this->getPublicKey($storeId);
         $environment = $this->mercadopagoConfig->getEnvironmentMode($storeId);
 
-        $hasError = $this->verifyInvalidCredencial($token, $publicKey);
+        $messageError = $this->verifyCredentials($token, $publicKey);
 
-        if ($environment === 'production' && !$hasError) {
-            $hasError = $this->verifyProductionMode($token, $publicKey);
-        }
-
-        if ($environment === 'sandbox' && !$hasError) {
-            $hasError = $this->verifySandBoxMode($token, $publicKey);
-        }
-
-        return $hasError;
-
-    }
-
-    public function verifyInvalidCredencial($token, $publicKey): bool
-    {
-        $hasError = false;
-
-        if (isset($token['error']) || isset($publicKey['error'])) {
-            $hasError = true;
-        } 
-        
-        if (isset($token['success']) && isset($publicKey['success'])) {
-            if (!$token['response']['homologated']) {
-                $hasError = true;
+        if(!isset($messageError)){
+            if ($environment === 'production') {
+                $messageError = $this->verifyProductionMode($token, $publicKey);
             }
     
-            if ($token['response']['client_id'] !== $publicKey['response']['client_id']) {
-                $hasError = true;
+            if ($environment === 'sandbox') {
+                $messageError = $this->verifySandBoxMode($token, $publicKey);
             }
-        } else {
-            $hasError = true;
         }
 
-        if ($hasError) {
-            $this->messageManager->addWarning(
-                __('Your credentials are incorrect. Please double-check in your account your credentials are correct.')
-            );
+        if(isset($messageError)){
+            $this->messageManager->addWarning(__($messageError));
+            $hasError = true;
         }
 
         return $hasError;
+
     }
 
-    public function verifyProductionMode($token, $publicKey): bool
+    public function verifyCredentials($token, $publicKey): string
     {
-        $hasError = false;
+        if(isset($token['error']) || isset($publicKey['error']))
+        {
+            return self::INVALID_CREDENTIAL;
+        }
 
+        if (!isset($token['success']) || !isset($publicKey['success']))
+        {
+            return self::INVALID_CREDENTIAL;
+        }
+
+        if (!$token['response']['homologated']) {
+            return self::INVALID_CREDENTIAL;
+        }
+
+        if ($token['response']['client_id'] !== $publicKey['response']['client_id']) {
+            return self::INVALID_CREDENTIAL;
+        }
+    }
+
+    public function verifyProductionMode($token, $publicKey): string
+    {
         if($token['response']['is_test']) {
-            $hasError = true;
+            return self::INVALID_PRODUCTION_MODE;
         }
 
         if($publicKey['response']['is_test']) {
-            $hasError = true;
+            return self::INVALID_PRODUCTION_MODE;
         }
-
-        if ($hasError) {
-            $this->messageManager->addWarning(
-                __('Your credentials are incorrect. Test credentials have been filled in and should be used in sandbox mode. Please check the credentials again.')
-            );
-        }
-
-        return $hasError;
     }
 
-    public function verifySandBoxMode($token, $publicKey): bool
+    public function verifySandBoxMode($token, $publicKey): string
     {
-        $hasError = false;
-
         if(!$token['response']['is_test']) {
-            $hasError = true;
+            return self::INVALID_SANDBOX_MODE;
         }
 
         if(!$publicKey['response']['is_test']) {
-            $hasError = true;
+            return self::INVALID_SANDBOX_MODE;
         }
-
-        if ($hasError) {
-            $this->messageManager->addWarning(
-                __('Your credentials are incorrect. Test credentials have been filled in and should be used in sandbox mode. Please check the credentials again.')
-            );
-        }
-
-        return $hasError;
     }
 
     /**
