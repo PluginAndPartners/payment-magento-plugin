@@ -361,3 +361,8 @@ Webpay,Webpay
 "The number of installments chosen is invalid.","The number of installments chosen is invalid."
 "The maximum number of attempts was reached.","The maximum number of attempts was reached."
 "Something went wrong. Please try again.","Something went wrong. Please try again."
+"It was not possible to complete the payment. Please use another method to complete the purchase.","It was not possible to complete the payment. Please use another method to complete the purchase."
+"Your payment was declined because some of your card details are incorrect. Please check the information to complete the purchase or try another payment method.","Your payment was declined because some of your card details are incorrect. Please check the information to complete the purchase or try another payment method."
+"Your credentials are incorrect. Please double-check in your account your credentials are correct.","Your credentials are incorrect. Please double-check in your account your credentials are correct."
+"Your credentials are incorrect. Test credentials have been filled in and should be used in sandbox mode. Please check the credentials again.","Your credentials are incorrect. Test credentials have been filled in and should be used in sandbox mode. Please check the credentials again."
+"Your credentials are incorrect. Production credentials have been filled in and should be used in production mode. Please check the credentials again.","Your credentials are incorrect. Production credentials have been filled in and should be used in production mode. Please check the credentials again."

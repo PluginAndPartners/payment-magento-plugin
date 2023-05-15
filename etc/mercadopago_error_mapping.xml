@@ -24,16 +24,13 @@
         <message code="cc_rejected_blacklist" translate="true">The payment was rejected due to suspicion of fraud.</message>
         <message code="cc_rejected_call_for_authorize" translate="true">The payment method used requires prior authorization of the purchase amount.</message>
         <message code="cc_rejected_card_disabled" translate="true">This card is blocked.</message>
-        
-        <message code="cc_rejected_card_error" translate="true">We were unable to process your payment.</message>
-
+        <message code="cc_rejected_card_error" translate="true">It was not possible to complete the payment. Please use another method to complete the purchase.</message>
         <message code="cc_rejected_duplicated_payment" translate="true">You made a similar payment a short time ago. Please use another payment method.</message>
         <message code="cc_rejected_high_risk" translate="true">Something went wrong with the payment. Please use another card or choose a different payment method.</message>
         <message code="cc_rejected_insufficient_amount" translate="true">Something went wrong with the payment. Please use another card or choose a different payment method.</message>
         <message code="cc_rejected_invalid_installments" translate="true">The number of installments chosen is invalid.</message>
         <message code="cc_rejected_max_attempts" translate="true">The maximum number of attempts was reached.</message>
         <message code="cc_rejected_other_reason" translate="true">Something went wrong. Please try again.</message>
-        
-        <message code="cc_rejected_card_type_not_allowed" translate="true">The payment was rejected because the user does not have the credit function enabled on his multiple card (debit and credit).</message>
+        <message code="cc_rejected_card_type_not_allowed" translate="true">Your payment was declined because some of your card details are incorrect. Please check the information to complete the purchase or try another payment method.</message>
     </message_list>
 </mapping>
