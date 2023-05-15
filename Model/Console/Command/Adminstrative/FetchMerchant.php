@@ -167,15 +167,183 @@ class FetchMerchant extends AbstractModel
     ) {
         $validateToken = $this->hasValidationStatusToken($storeId, $storeIdIsDefault, $webSiteId);
         if ($validateToken) {
-            return false;
-        }
-
-        $validatePublicKey = $this->hasValidationStatusPublicKey($storeId, $storeIdIsDefault, $webSiteId);
-        if ($validatePublicKey) {
+            $this->clearData($storeIdIsDefault, $storeId, $webSiteId);
+            $this->cacheTypeList->cleanType('config');
             return false;
         }
 
         $this->hasUserData($storeId, $storeIdIsDefault, $webSiteId);
+    }
+
+    /**
+     * Has Validation Status Token.
+     *
+     * @param int  $storeId
+     * @param bool $storeIdIsDefault
+     * @param int  $webSiteId
+     *
+     * @return bool
+     */
+    public function hasValidationStatusToken(
+        $storeId,
+        $storeIdIsDefault,
+        $webSiteId
+    ) {
+        $hasError = false;
+
+        $token = $this->getAccessToken($storeId);
+        $publicKey = $this->getPublicKey($storeId);
+        $environment = $this->mercadopagoConfig->getEnvironmentMode($storeId);
+
+        $hasError = $this->verifyInvalidCredencial($token, $publicKey);
+
+        if ($environment === 'production' && !$hasError) {
+            $hasError = $this->verifyProductionMode($token, $publicKey);
+        }
+
+        if ($environment === 'sandbox' && !$hasError) {
+            $hasError = $this->verifySandBoxMode($token, $publicKey);
+        }
+
+        return $hasError;
+
+    }
+
+    public function verifyInvalidCredencial($token, $publicKey): bool
+    {
+        $hasError = false;
+
+        if (isset($token['error']) || isset($publicKey['error'])) {
+            $hasError = true;
+        } 
+        
+        if (isset($token['success']) && isset($publicKey['success'])) {
+            if (!$token['response']['homologated']) {
+                $hasError = true;
+            }
+    
+            if ($token['response']['client_id'] !== $publicKey['response']['client_id']) {
+                $hasError = true;
+            }
+        } else {
+            $hasError = true;
+        }
+
+        if ($hasError) {
+            $this->messageManager->addWarning(
+                __('Your credentials are incorrect. Please double-check in your account your credentials are correct.')
+            );
+        }
+
+        return $hasError;
+    }
+
+    public function verifyProductionMode($token, $publicKey): bool
+    {
+        $hasError = false;
+
+        if($token['response']['is_test']) {
+            $hasError = true;
+        }
+
+        if($publicKey['response']['is_test']) {
+            $hasError = true;
+        }
+
+        if ($hasError) {
+            $this->messageManager->addWarning(
+                __('Your credentials are incorrect. Test credentials have been filled in and should be used in sandbox mode. Please check the credentials again.')
+            );
+        }
+
+        return $hasError;
+    }
+
+    public function verifySandBoxMode($token, $publicKey): bool
+    {
+        $hasError = false;
+
+        if(!$token['response']['is_test']) {
+            $hasError = true;
+        }
+
+        if(!$publicKey['response']['is_test']) {
+            $hasError = true;
+        }
+
+        if ($hasError) {
+            $this->messageManager->addWarning(
+                __('Your credentials are incorrect. Test credentials have been filled in and should be used in sandbox mode. Please check the credentials again.')
+            );
+        }
+
+        return $hasError;
+    }
+
+    /**
+     * Get Validate Public Key.
+     *
+     * @param int $storeId
+     *
+     * @return array
+     */
+    public function getPublicKey($storeId): array
+    {
+        $publicKey = $this->mercadopagoConfig->getMerchantGatewayClientId($storeId);
+        $uri = $this->mercadopagoConfig->getApiUrl();
+        $clientConfigs = $this->mercadopagoConfig->getClientConfigs();
+
+        $client = $this->httpClientFactory->create();
+        $client->setMethod(ZendClient::GET);
+        $client->setConfig($clientConfigs);
+        $client->setUri($uri.'/plugins-credentials-wrapper/credentials?public_key='.$publicKey);
+
+        try {
+            $result = $client->request()->getBody();
+            $response = $this->json->unserialize($result);
+
+            $this->logger->debug([
+                'plugins-credentials-wrapper/credential?public_key=' => $result,
+            ]);
+
+            return [
+                'success'    => true,
+                'response'   => $response,
+            ];
+        } catch (Exception $exc) {
+            $this->logger->debug(['error' => $exc->getMessage()]);
+
+            return ['success' => false, 'error' =>  $exc->getMessage()];
+        }
+    }
+
+    public function getAccessToken($storeId): array
+    {
+        $uri = $this->mercadopagoConfig->getApiUrl();
+        $clientConfigs = $this->mercadopagoConfig->getClientConfigs();
+        $clientHeaders = $this->mercadopagoConfig->getClientHeaders($storeId);
+
+        $client = $this->httpClientFactory->create();
+        $client->setMethod(ZendClient::GET);
+        $client->setConfig($clientConfigs);
+        $client->setHeaders($clientHeaders);
+        $client->setUri($uri.'/plugins-credentials-wrapper/credentials');
+
+        try {
+            $result = $client->request()->getBody();
+            $response = $this->json->unserialize($result);
+
+            $this->logger->debug(['plugins-credentials-wrapper/credential' => $result]);
+
+            return [
+                'success'    => true,
+                'response'   => $response,
+            ];
+        } catch (Exception $exc) {
+            $this->logger->debug(['error' => $exc->getMessage()]);
+
+            return ['success' => false, 'error' =>  $exc->getMessage()];
+        }
     }
 
     /**
@@ -206,191 +374,6 @@ class FetchMerchant extends AbstractModel
             $this->saveData($registreData, $storeIdIsDefault, $storeId, $webSiteId);
 
             $this->cacheTypeList->cleanType('config');
-        }
-    }
-
-    /**
-     * Has Validation Status Public Key.
-     *
-     * @param int  $storeId
-     * @param bool $storeIdIsDefault
-     * @param int  $webSiteId
-     *
-     * @return bool
-     */
-    public function hasValidationStatusPublicKey(
-        $storeId,
-        $storeIdIsDefault,
-        $webSiteId
-    ) {
-        $hasError = false;
-        $validatePublicKey = $this->getValidatePublicKey($storeId);
-
-        if (isset($validatePublicKey['error'])) {
-            $hasError = true;
-            $this->messageManager->addNotice(
-                __('Please check store id %1 credentials, they are invalid so they were deleted.', $storeId)
-            );
-
-            $this->cacheTypeList->cleanType('config');
-
-            $this->clearData($storeIdIsDefault, $storeId, $webSiteId);
-
-            return $hasError;
-        }
-
-        return $hasError;
-    }
-
-    /**
-     * Has Validation Status Token.
-     *
-     * @param int  $storeId
-     * @param bool $storeIdIsDefault
-     * @param int  $webSiteId
-     *
-     * @return bool
-     */
-    public function hasValidationStatusToken(
-        $storeId,
-        $storeIdIsDefault,
-        $webSiteId
-    ) {
-        $hasError = false;
-        $mpSiteId = $this->mercadopagoConfig->getMpSiteId($storeId);
-        $mpSiteId = strtolower((string) $mpSiteId);
-        $mpWebSiteUrl = $this->mercadopagoConfig->getMpWebSiteBySiteId();
-        $token = $this->getValidateCredentials($storeId);
-        $publicKey = $this->getValidatePublicKey($storeId);
-        $fullUrl = $mpWebSiteUrl.$mpSiteId.'/account/credentials';
-        $environment = $this->mercadopagoConfig->getEnvironmentMode($storeId);
-
-        if (!$token['success']) {
-            if (isset($token['error'])) {
-                $hasError = true;
-                $this->messageManager->addNotice(
-                    __('Please check store id %1 credentials, they are invalid so they were deleted.', $storeId)
-                );
-                $this->clearData($storeIdIsDefault, $storeId, $webSiteId);
-
-                $this->cacheTypeList->cleanType('config');
-
-                return $hasError;
-            }
-
-            if ($token['response']['is_test']) {
-                $this->messageManager->addComplexWarningMessage(
-                    'addRedirectAccountMessage',
-                    [
-                        'store' => $storeId,
-                        'url'   => $fullUrl,
-                    ]
-                );
-                $errorMsg = __('Store ID: %1 Not allowed for production use', $storeId);
-                $this->writeln('<error>'.$errorMsg.'</error>');
-            }
-        }
-
-        if ($environment === 'production') {
-            if($token['response']['is_test']) {
-                $hasError = true;
-                $this->messageManager->addNotice(
-                    __('Please check %1 store ID credentials, they are test and should be used in sandbox mode, so they have been deleted.', $storeId)
-                );
-                $this->clearData($storeIdIsDefault, $storeId, $webSiteId);
-    
-                $this->cacheTypeList->cleanType('config');
-    
-                return $hasError;
-            }
-        }
-
-        if ($token['response']['client_id'] !== $publicKey['response']['client_id']
-            || $token['response']['is_test'] !== $publicKey['response']['is_test']) {
-            $hasError = true;
-            $this->messageManager->addNotice(
-                __('Please check store id %1 credentials, they are invalid so they were deleted.', $storeId)
-            );
-            $this->clearData($storeIdIsDefault, $storeId, $webSiteId);
-
-            $this->cacheTypeList->cleanType('config');
-
-            return $hasError;
-        }
-
-        return $hasError;
-    }
-
-    /**
-     * Get Validate Credentials.
-     *
-     * @param int $storeId
-     *
-     * @return array
-     */
-    public function getValidateCredentials($storeId): array
-    {
-        $uri = $this->mercadopagoConfig->getApiUrl();
-        $clientConfigs = $this->mercadopagoConfig->getClientConfigs();
-        $clientHeaders = $this->mercadopagoConfig->getClientHeaders($storeId);
-
-        $client = $this->httpClientFactory->create();
-        $client->setUri($uri.'/plugins-credentials-wrapper/credentials');
-        $client->setConfig($clientConfigs);
-        $client->setHeaders($clientHeaders);
-        $client->setMethod(ZendClient::GET);
-
-        try {
-            $result = $client->request()->getBody();
-            $response = $this->json->unserialize($result);
-
-            $this->logger->debug(['plugins-credentials-wrapper/credential' => $result]);
-
-            return [
-                'success'    => isset($response['homologated']) ? $response['homologated'] : false,
-                'response'   => $response,
-            ];
-        } catch (Exception $exc) {
-            $this->logger->debug(['error' => $exc->getMessage()]);
-
-            return ['success' => false, 'error' =>  $exc->getMessage()];
-        }
-    }
-
-    /**
-     * Get Validate Public Key.
-     *
-     * @param int $storeId
-     *
-     * @return array
-     */
-    public function getValidatePublicKey($storeId): array
-    {
-        $uri = $this->mercadopagoConfig->getApiUrl();
-        $clientConfigs = $this->mercadopagoConfig->getClientConfigs();
-        $publicKey = $this->mercadopagoConfig->getMerchantGatewayClientId($storeId);
-
-        $client = $this->httpClientFactory->create();
-        $client->setUri($uri.'/plugins-credentials-wrapper/credentials?public_key='.$publicKey);
-        $client->setConfig($clientConfigs);
-        $client->setMethod(ZendClient::GET);
-
-        try {
-            $result = $client->request()->getBody();
-            $response = $this->json->unserialize($result);
-
-            $this->logger->debug([
-                'plugins-credentials-wrapper/credential?public_key=' => $result,
-            ]);
-
-            return [
-                'success'    => isset($response['homologated']) ? $response['homologated'] : false,
-                'response'   => $response,
-            ];
-        } catch (Exception $exc) {
-            $this->logger->debug(['error' => $exc->getMessage()]);
-
-            return ['success' => false, 'error' =>  $exc->getMessage()];
         }
     }
 
