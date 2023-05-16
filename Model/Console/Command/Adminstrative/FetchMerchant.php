@@ -38,22 +38,23 @@ class FetchMerchant extends AbstractModel
     /**
      * Message error invalid credential to sendbox mode.
      */
-    public const INVALID_SANDBOX_MODE = 'Your credentials are incorrect. Test credentials have been filled in and should be used in sandbox mode. Please check the credentials again.';
+    public const INVALID_SANDBOX_MODE = 'Your credentials are incorrect. Production credentials have been filled in and should be used in production mode. Please check the credentials again.';
     
-        /**
+    /**
      * Message error invalid credential to production mode.
      */
-    public const INVALID_PRODUCTION_MODE = 'Your credentials are incorrect. Production credentials have been filled in and should be used in production mode. Please check the credentials again.';
+    public const INVALID_PRODUCTION_MODE = 'Your credentials are incorrect. Test credentials have been filled in and should be used in sandbox mode. Please check the credentials again.';
     
-        /**
+    /**
      * Enviroment production.
      */
     public const ENVIRONMENT_PRODUCTION = 'production';
 
-            /**
+    /**
      * Enviroment sandbox.
      */
     public const ENVIRONMENT_SANDBOX = 'sandbox';
+
     /**
      * @var TypeListInterface
      */
@@ -237,18 +238,15 @@ class FetchMerchant extends AbstractModel
         }
 
         return $hasError;
-
     }
 
-    public function verifyCredentials($token, $publicKey): string
+    public function verifyCredentials($token, $publicKey)
     {
-        if(isset($token['error']) || isset($publicKey['error']))
-        {
+        if (isset($token['error']) || isset($publicKey['error'])) {
             return self::INVALID_CREDENTIAL;
         }
 
-        if (!isset($token['success']) || !isset($publicKey['success']))
-        {
+        if (!isset($token['success']) || !isset($publicKey['success'])) {
             return self::INVALID_CREDENTIAL;
         }
 
@@ -261,7 +259,7 @@ class FetchMerchant extends AbstractModel
         }
     }
 
-    public function verifyProductionMode($token, $publicKey): string
+    public function verifyProductionMode($token, $publicKey)
     {
         if($token['response']['is_test']) {
             return self::INVALID_PRODUCTION_MODE;
@@ -272,7 +270,7 @@ class FetchMerchant extends AbstractModel
         }
     }
 
-    public function verifySandBoxMode($token, $publicKey): string
+    public function verifySandBoxMode($token, $publicKey)
     {
         if(!$token['response']['is_test']) {
             return self::INVALID_SANDBOX_MODE;
