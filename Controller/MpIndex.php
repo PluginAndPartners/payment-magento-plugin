@@ -372,7 +372,6 @@ abstract class MpIndex extends Action
                 $payment->setShouldCloseParentTransaction(false);
                 $creditMemo->setItems([]);
             } else {
-                $payment->setIsTransactionClosed(true);
                 $payment->setShouldCloseParentTransaction(true);
             }
             
