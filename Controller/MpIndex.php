@@ -366,13 +366,12 @@ abstract class MpIndex extends Action
             $payment->setTransactionId($transacId."-refund");
             $payment->setParentTransactionId($transacId);
             $payment->setIsTransactionClosed(true);
+            $payment->setShouldCloseParentTransaction(true);
 
             if ($mpAmountRefound < $creditMemo->getBaseGrandTotal()) {
                 $payment->setIsTransactionClosed(false);
                 $payment->setShouldCloseParentTransaction(false);
                 $creditMemo->setItems([]);
-            } else {
-                $payment->setShouldCloseParentTransaction(true);
             }
             
             $payment->addTransaction(Transaction::TYPE_REFUND);
