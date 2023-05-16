@@ -1188,6 +1188,7 @@ site_disabled.,site_disabled.
 "Link for payment","Link para pagamento"
 "Pix","Pix"
 "The order %1, was refunded directly on Mercado Pago, you need to check stock of sold items.","O pedido %1, foi reembolsado diretamente no Mercado Pago, você precisa verificar o estoque de itens vendidos."
+"The order %1, was refunded directly on Mercado Pago, but an error occured when refunding offline, you need to check order refunds and stock of sold items.","O pedido %1, foi reembolsado diretamente no Mercado Pago, mas ocorreu um erro ao reembolsar offline, é necessário verificar o reembolso do pedido e estoque de itens vendidos."
 "Order refunded in Mercado Pago, refunded offline in the store.","Pedido reembolsado no Mercado Pago, reembolsado offline criado na loja."
 "Order refunded.","Pedido reembolsado."
 "mp_payment_id,"Identificação do Pagamento (Mercado Pago)"

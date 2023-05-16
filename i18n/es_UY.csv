@@ -1274,3 +1274,5 @@ site_disabled.,site_disabled.
 "Your order # is: <span>%1</span>.","Recibimos su pedido: <span>%1</span>!"
 "By continuing, you agree to our ","Al continuar aceptas nuestros "
 "Terms and Conditions.","Términos y Condiciones."
+"The order %1, was refunded directly on Mercado Pago, you need to check stock of sold items.","El pedido %1, fue reembolsado directamente en Mercado Pago, necesitas consultar stock de artículos vendidos."
+"The order %1, was refunded directly on Mercado Pago, but an error occured when refunding offline, you need to check order refunds and stock of sold items.","El pedido %1, fue reembolsado directamente en Mercado Pago, pero ocurrió un error al reembolsar fuera de línea, debe consultar las devoluciones del pedido y el stock de artículos vendidos."

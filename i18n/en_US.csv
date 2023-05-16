@@ -4,6 +4,7 @@
 "Order not found.","Order not found."
 "Mercado Pago, refund notification","Mercado Pago, refund notification"
 "The order %1, was refunded directly on Mercado Pago, you need to check stock of sold items.","The order %1, was refunded directly on Mercado Pago, you need to check stock of sold items."
+"The order %1, was refunded directly on Mercado Pago, but an error occured when refunding offline, you need to check order refunds and stock of sold items.","The order %1, was refunded directly on Mercado Pago, but an error occured when refunding offline, you need to check order refunds and stock of sold items."
 Unavailable.,Unavailable.
 "Order refunded in Mercado Pago, refunded offline in the store.","Order refunded in Mercado Pago, refunded offline in the store."
 "Order refunded.","Order refunded."
