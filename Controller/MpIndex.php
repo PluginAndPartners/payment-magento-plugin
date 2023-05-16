@@ -365,6 +365,7 @@ abstract class MpIndex extends Action
             $transacId = $payment->getLastTransId();
             $payment->setTransactionId($transacId."-refund");
             $payment->setParentTransactionId($transacId);
+            $payment->setIsTransactionClosed(true);
 
             if ($mpAmountRefound < $creditMemo->getBaseGrandTotal()) {
                 $payment->setIsTransactionClosed(false);
@@ -376,6 +377,7 @@ abstract class MpIndex extends Action
             }
             
             $payment->addTransaction(Transaction::TYPE_REFUND);
+            $order->save();
 
             $creditMemo->setState(1);
             $creditMemo->setBaseGrandTotal($mpAmountRefound);
