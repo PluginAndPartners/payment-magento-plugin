@@ -144,6 +144,7 @@ class CheckoutPro extends MpIndex implements CsrfAwareActionInterface
         $results = [];
         $process = [];
         $resultData = [];
+        $refundId = null;
         
         foreach ($transactions as $transaction) {
             $order = $this->getOrderData($transaction->getOrderId());
@@ -164,6 +165,7 @@ class CheckoutPro extends MpIndex implements CsrfAwareActionInterface
                                 $origin = $refunds[$refundNotifying['id']]['metadata']['origem'];
                             }
                             $mpAmountRefund = $refundNotifying['amount'];
+                            $refundId = $refundNotifying['id'];
 
                             $process = $this->processNotification(
                                 $mpTransactionId,
@@ -172,7 +174,8 @@ class CheckoutPro extends MpIndex implements CsrfAwareActionInterface
                                 $order,
                                 $mpAmountRefund,
                                 $mercadopagoData,
-                                $origin
+                                $origin,
+                                $refundId
                             );
                                 
                             array_push($resultData, $process['msg']);
@@ -195,7 +198,8 @@ class CheckoutPro extends MpIndex implements CsrfAwareActionInterface
                     $order,
                     $mpAmountRefund,
                     $mercadopagoData,
-                    $origin
+                    $origin,
+                    $refundId
                 );
 
                 array_push($resultData, $process['msg']);
@@ -290,11 +294,12 @@ class CheckoutPro extends MpIndex implements CsrfAwareActionInterface
         $order,
         $mpAmountRefund = null,
         $mercadopagoData = null,
-        $origin = null
+        $origin = null,
+        $refundId = null
     ) {
         $result = [];
 
-        $isNotApplicable = $this->filterInvalidNotification($mpStatus, $order, $mpAmountRefund, $origin);
+        $isNotApplicable = $this->filterInvalidNotification($mpStatus, $order, $mpAmountRefund, $origin, $refundId);
 
         if ($isNotApplicable['isInvalid']) {
             if (strcmp($isNotApplicable['msg'], 'Refund notification for order refunded directly in Mercado Pago.')) {

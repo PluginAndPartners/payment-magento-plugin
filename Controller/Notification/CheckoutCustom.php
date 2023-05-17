@@ -149,6 +149,7 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
         $mpAmountRefund = null;
         $process = [];
         $resultData = [];
+        $refundId = null;
 
         foreach ($transactions as $transaction) {
             $order = $this->getOrderData($transaction->getOrderId());
@@ -167,8 +168,9 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
                                 $origin = $refunds[$refundNotifying['id']]['metadata']['origem'];
                             }
                             $mpAmountRefund = $refundNotifying['amount'];
+                            $refundId = $refundNotifying['id'];
 
-                            $process = $this->processNotification($mpStatus, $order, $notificationId, $mpAmountRefund, $origin);
+                            $process = $this->processNotification($mpStatus, $order, $notificationId, $mpAmountRefund, $origin, $refundId);
                             
                             array_push($resultData, $process['msg']);
                             
@@ -183,7 +185,7 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
                     }
                 }
             } else {
-                $process = $this->processNotification($mpStatus, $order, $notificationId, $mpAmountRefund, $origin);
+                $process = $this->processNotification($mpStatus, $order, $notificationId, $mpAmountRefund, $origin, $refundId);
                 
                 array_push($resultData, $process['msg']);
                             
@@ -227,11 +229,12 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
         $order,
         $notificationId,
         $mpAmountRefund = null,
-        $origin = null
+        $origin = null,
+        $refundId = null
     ) {
         $result = [];
 
-        $isNotApplicable = $this->filterInvalidNotification($mpStatus, $order, $mpAmountRefund, $origin);
+        $isNotApplicable = $this->filterInvalidNotification($mpStatus, $order, $mpAmountRefund, $origin, $refundId);
 
         if ($isNotApplicable['isInvalid']) {
             if (
