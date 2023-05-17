@@ -53,6 +53,11 @@ class RefundClientTwoCc implements ClientInterface
   public const X_IDEMPOTENCY_KEY = 'x-idempotency-key';
 
   /**
+   * Notification Origin - Magento
+   */
+  public const NOTIFICATION_ORIGIN = 'magento';
+  
+  /**
    * @var Logger
    */
   protected $logger;
@@ -118,6 +123,7 @@ class RefundClientTwoCc implements ClientInterface
     unset($request['payment_id']);
     unset($request[self::STORE_ID]);
     unset($request[self::X_IDEMPOTENCY_KEY]);
+    $metadata = ['origem' => self::NOTIFICATION_ORIGIN];
 
     $urlRefund = $url . '/v1/asgard/multipayments/' . $paymentId . '/refund';
 
@@ -125,6 +131,7 @@ class RefundClientTwoCc implements ClientInterface
       $client->setUri($urlRefund);
       $client->setConfig($clientConfigs);
       $client->setHeaders($clientHeaders);
+      $request = (object) array_merge( (array)$request, array( 'metadata' => $metadata ) );
       $client->setRawData($this->json->serialize($request), 'application/json');
 
       $client->setMethod(ZendClient::POST);

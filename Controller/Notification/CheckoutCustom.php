@@ -118,7 +118,7 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
      * @param string $notificationId
      * @param $respData
      *
-     * @return array ResultInterface
+     * @return ResultInterface
      */
     public function initProcess(
         $mpTransactionId,
@@ -148,6 +148,7 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
         $results = [];
         $mpAmountRefund = null;
         $process = [];
+        $resultData = [];
 
         foreach ($transactions as $transaction) {
             $order = $this->getOrderData($transaction->getOrderId());
@@ -168,36 +169,41 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
                             $mpAmountRefund = $refundNotifying['amount'];
 
                             $process = $this->processNotification($mpStatus, $order, $notificationId, $mpAmountRefund, $origin);
-                                
-                            /** @var ResultInterface $result */
-                            $result = $this->createResult(
-                                $process['code'],
-                                $process['msg'],
-                            );
-                            array_push($results, $result);
+                            
+                            array_push($resultData, $process['msg']);
+                            
+                            if ($process['code'] !== 200) {
+                                /** @var ResultInterface $result */
+                                return $this->createResult(
+                                    $process['code'],
+                                    $resultData
+                                );
+                            }
                         }
                     }
                 }
             } else {
                 $process = $this->processNotification($mpStatus, $order, $notificationId, $mpAmountRefund, $origin);
                 
-                /** @var ResultInterface $result */
-                $result = $this->createResult(
-                    $process['code'],
-                    $process['msg'],
-                );
-                array_push($results, $result);
+                array_push($resultData, $process['msg']);
+                            
+                if ($process['code'] !== 200) {
+                    /** @var ResultInterface $result */
+                    return $this->createResult(
+                        $process['code'],
+                        $resultData
+                    );
+                }
             }
 
-            if (sizeof($results) === 0) {
+            if (sizeof($resultData) === 0) {
+                /** @var ResultInterface $result */
                 $result = $this->createResult(
                     422,
                     'Nothing to proccess'
                 );
-                array_push($results, $result);
+                return $result;
             }
-
-            return $results;
         }
 
         /** @var ResultInterface $result */

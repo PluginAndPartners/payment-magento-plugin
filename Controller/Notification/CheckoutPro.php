@@ -55,7 +55,7 @@ class CheckoutPro extends MpIndex implements CsrfAwareActionInterface
     /**
      * Execute.
      *
-     * @return array ResultInterface
+     * @return ResultInterface
      */
     public function execute()
     {
@@ -143,6 +143,7 @@ class CheckoutPro extends MpIndex implements CsrfAwareActionInterface
         $origin = '';
         $results = [];
         $process = [];
+        $resultData = [];
         
         foreach ($transactions as $transaction) {
             $order = $this->getOrderData($transaction->getOrderId());
@@ -174,12 +175,15 @@ class CheckoutPro extends MpIndex implements CsrfAwareActionInterface
                                 $origin
                             );
                                 
-                            /** @var ResultInterface $result */
-                            $result = $this->createResult(
-                                $process['code'],
-                                $process['msg'],
-                            );
-                            array_push($results, $result);
+                            array_push($resultData, $process['msg']);
+                            
+                            if ($process['code'] !== 200) {
+                                /** @var ResultInterface $result */
+                                return $this->createResult(
+                                    $process['code'],
+                                    $resultData
+                                );
+                            }
                         }
                     }
                 }
@@ -194,27 +198,29 @@ class CheckoutPro extends MpIndex implements CsrfAwareActionInterface
                     $origin
                 );
 
-                /** @var ResultInterface $result */
-                $result = $this->createResult(
-                    $process['code'],
-                    $process['msg'],
-                );
-                array_push($results, $result);
+                array_push($resultData, $process['msg']);
+                            
+                if ($process['code'] !== 200) {
+                    /** @var ResultInterface $result */
+                    return $this->createResult(
+                        $process['code'],
+                        $resultData
+                    );
+                }
             }
 
             if ($mpStatus === 'pending') {
                 $this->updateDetails($mercadopagoData, $order);
             }
 
-            if (sizeof($results) === 0) {
+            if (sizeof($resultData) === 0) {
+                /** @var ResultInterface $result */
                 $result = $this->createResult(
                     422,
                     'Nothing to proccess'
                 );
-                array_push($results, $result);
+                return $result;
             }
-
-            return $results;
         }
 
         /** @var ResultInterface $result */
