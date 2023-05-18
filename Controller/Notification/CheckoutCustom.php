@@ -155,7 +155,6 @@ class CheckoutCustom extends MpIndex implements CsrfAwareActionInterface
             $order = $this->getOrderData($transaction->getOrderId());
             
             if ($mpStatus === 'refunded') {
-                // alterar para verificar se é multipayment, se for, fazer o split da string usando o _
                 foreach ($paymentsDetails as $paymentsDetail) {
                     $refunds = $paymentsDetail['refunds'];
 

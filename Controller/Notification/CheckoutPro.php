@@ -152,7 +152,6 @@ class CheckoutPro extends MpIndex implements CsrfAwareActionInterface
             $transactionId = $payment->getLastTransId();
 
             if ($mpStatus === 'refunded') {
-                // alterar para verificar se é multipayment, se for, fazer o split da string usando o _
                 foreach ($paymentsDetails as $paymentsDetail) {
                     $refunds = $paymentsDetail['refunds'];
 
